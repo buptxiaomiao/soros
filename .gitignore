@@ -1,0 +1,8 @@
+.idea
+./venv
+*.csv
+*.pickle
+./sql_files/*
+./data_files/*
+./test
+./trash
