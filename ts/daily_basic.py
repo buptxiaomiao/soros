@@ -15,10 +15,10 @@ from utils.local_pick_util import LocalPickleUtil
 import pandas as pd
 
 
-class Daily(object):
+class DailyBasic(object):
 
-    DATA_FILE = 'daily.csv'
-    SQL_FILE = 'daily.sql'
+    DATA_FILE = 'daily_basic.csv'
+    SQL_FILE = 'daily_basic.sql'
 
     @classmethod
     def save_to_csv(cls, data_df_list, dt_list):
@@ -44,7 +44,7 @@ class Daily(object):
                 continue
             cache.add_pickle(dt)
 
-            df = pro.daily(**{
+            df = pro.daily_basic(**{
                 "ts_code": "",
                 "trade_date": dt,
                 "start_date": "",
@@ -54,15 +54,23 @@ class Daily(object):
             }, fields=[
                 "ts_code",
                 "trade_date",
-                "open",
-                "high",
-                "low",
                 "close",
-                "pre_close",
-                "change",
-                "pct_chg",
-                "vol",
-                "amount"
+                "turnover_rate",
+                "turnover_rate_f",
+                "volume_ratio",
+                "pe",
+                "pe_ttm",
+                "pb",
+                "ps",
+                "ps_ttm",
+                "dv_ratio",
+                "dv_ttm",
+                "total_share",
+                "float_share",
+                "free_share",
+                "total_mv",
+                "circ_mv",
+                "limit_status"
             ])
             df_list.append(df)
             dt_list.append(dt)
@@ -93,4 +101,4 @@ class Daily(object):
 
 
 if __name__ == '__main__':
-    Daily.run()
+    DailyBasic.run()

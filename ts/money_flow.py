@@ -15,10 +15,10 @@ from utils.local_pick_util import LocalPickleUtil
 import pandas as pd
 
 
-class Daily(object):
+class MoneyFlow(object):
 
-    DATA_FILE = 'daily.csv'
-    SQL_FILE = 'daily.sql'
+    DATA_FILE = 'money_flow.csv'
+    SQL_FILE = 'money_flow.sql'
 
     @classmethod
     def save_to_csv(cls, data_df_list, dt_list):
@@ -44,25 +44,35 @@ class Daily(object):
                 continue
             cache.add_pickle(dt)
 
-            df = pro.daily(**{
+            df = pro.moneyflow(**{
                 "ts_code": "",
                 "trade_date": dt,
                 "start_date": "",
                 "end_date": "",
-                "offset": "",
-                "limit": ""
+                "limit": "",
+                "offset": ""
             }, fields=[
                 "ts_code",
                 "trade_date",
-                "open",
-                "high",
-                "low",
-                "close",
-                "pre_close",
-                "change",
-                "pct_chg",
-                "vol",
-                "amount"
+                "buy_sm_vol",
+                "buy_sm_amount",
+                "sell_sm_vol",
+                "sell_sm_amount",
+                "buy_md_vol",
+                "buy_md_amount",
+                "sell_md_vol",
+                "sell_md_amount",
+                "buy_lg_vol",
+                "buy_lg_amount",
+                "sell_lg_vol",
+                "sell_lg_amount",
+                "buy_elg_vol",
+                "buy_elg_amount",
+                "sell_elg_vol",
+                "sell_elg_amount",
+                "net_mf_vol",
+                "net_mf_amount",
+                "trade_count"
             ])
             df_list.append(df)
             dt_list.append(dt)
@@ -93,4 +103,4 @@ class Daily(object):
 
 
 if __name__ == '__main__':
-    Daily.run()
+    MoneyFlow.run()
