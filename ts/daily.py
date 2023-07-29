@@ -21,13 +21,14 @@ class Daily(object):
     SQL_FILE = 'daily.sql'
 
     @classmethod
-    def save_to_csv(cls, data_df_list, dt_list):
+    def save_to_csv(cls, data_df_list, dt_list, cache=None):
         res = reduce(lambda x, y: pd.concat([x, y]) if x is not None else y, data_df_list, None)
         suf = str(dt_list[-1]) + '_' + str(dt_list[0])
         file_name = PathUtil.get_data_file_name(cls.DATA_FILE, suf)
         res.to_csv(file_name, sep='\u0001', index=False)
         print(f'{cls.__name__} dt:{suf} save to {file_name}.')
         del res
+        cache.commit()
 
     @classmethod
     def run(cls):
@@ -71,14 +72,14 @@ class Daily(object):
             print(f'{cls.__name__} dt:{dt}, cache_num:{num}')
 
             if num >= 200000:
-                cls.save_to_csv(data_df_list=df_list, dt_list=dt_list)
+                cls.save_to_csv(data_df_list=df_list, dt_list=dt_list, cache=cache)
                 del df_list
                 del dt_list
                 df_list = []
                 dt_list = []
                 num = 0
         if df_list:
-            cls.save_to_csv(data_df_list=df_list, dt_list=dt_list)
+            cls.save_to_csv(data_df_list=df_list, dt_list=dt_list, cache=cache)
 
         # 渲染sql
         t = TemplateUtil(cls.SQL_FILE,
@@ -89,8 +90,6 @@ class Daily(object):
 
         print(f"sudo -u hive hive -f {sql_file}")
         exit_code = os.system(f"sudo -u hive hive -f {sql_file}")
-        if exit_code == 0:
-            cache.commit()
 
 
 if __name__ == '__main__':
