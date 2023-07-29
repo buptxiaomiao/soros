@@ -2,7 +2,7 @@
 
 import os
 import sys
-
+import time
 
 sys.path.append('..')
 from utils.ts_util import pro
@@ -64,6 +64,7 @@ class Daily(object):
                 "vol",
                 "amount"
             ])
+            time.sleep(0.1)
             df_list.append(df)
             dt_list.append(dt)
             num += df.shape[0]

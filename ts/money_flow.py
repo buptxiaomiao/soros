@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 
 sys.path.append('..')
@@ -74,6 +75,7 @@ class MoneyFlow(object):
                 "net_mf_amount",
                 "trade_count"
             ])
+            time.sleep(0.1)
             df_list.append(df)
             dt_list.append(dt)
             num += df.shape[0]

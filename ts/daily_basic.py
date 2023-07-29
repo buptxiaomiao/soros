@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 
 sys.path.append('..')
@@ -72,6 +73,7 @@ class DailyBasic(object):
                 "circ_mv",
                 "limit_status"
             ])
+            time.sleep(0.1)
             df_list.append(df)
             dt_list.append(dt)
             num += df.shape[0]
