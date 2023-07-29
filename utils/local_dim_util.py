@@ -20,7 +20,6 @@ class LocalDimUtil(object):
         df1 = df[
             (df['is_open'] == 1)
             & (df['cal_date'] >= 20000101)
-            & (df['cal_date'] >= 20230601)
             & (df['cal_date'] <= int(Now().datekey))
         ]
         df1.set_index(df1['cal_date'], inplace=True)
