@@ -1,104 +1,49 @@
 # coding: utf-8
 
-import os
-import sys
-import time
+from base_task import BaseTask
 
 
-sys.path.append('..')
-from utils.ts_util import pro
-from utils.path_util import PathUtil
-from utils.template_util import TemplateUtil
-from utils.local_dim_util import LocalDimUtil
-from utils.now import Now
-from functools import reduce
-from utils.local_pick_util import LocalPickleUtil
-import pandas as pd
-
-
-class DailyBasic(object):
+class DailyBasic(BaseTask):
+    """日线行情 https://tushare.pro/document/2?doc_id=27"""
 
     DATA_FILE = 'daily_basic.csv'
     SQL_FILE = 'daily_basic.sql'
 
     @classmethod
-    def save_to_csv(cls, data_df_list, dt_list, cache):
-        res = reduce(lambda x, y: pd.concat([x, y]) if x is not None else y, data_df_list, None)
-        suf = str(dt_list[-1]) + '_' + str(dt_list[0])
-        file_name = PathUtil.get_data_file_name(cls.DATA_FILE, suf)
-        res.to_csv(file_name, sep='\u0001', index=False)
-        print(f'{cls.__name__} dt:{suf} save to {file_name}.')
-        del res
-        cache.commit()
+    def run(cls):
+        cls.run_by_dt()
 
     @classmethod
-    def run(cls):
-
-        cache = LocalPickleUtil(cls)
-        date_df = LocalDimUtil.get_date_df()
-        date_list = date_df['cal_date'].to_list()
-
-        df_list = []
-        dt_list = []
-        num = 0
-        for dt in date_list:
-            if cache.check_pickle_exist(dt):
-                continue
-            cache.add_pickle(dt)
-
-            df = pro.daily_basic(**{
-                "ts_code": "",
-                "trade_date": dt,
-                "start_date": "",
-                "end_date": "",
-                "offset": "",
-                "limit": ""
-            }, fields=[
-                "ts_code",
-                "trade_date",
-                "close",
-                "turnover_rate",
-                "turnover_rate_f",
-                "volume_ratio",
-                "pe",
-                "pe_ttm",
-                "pb",
-                "ps",
-                "ps_ttm",
-                "dv_ratio",
-                "dv_ttm",
-                "total_share",
-                "float_share",
-                "free_share",
-                "total_mv",
-                "circ_mv",
-                "limit_status"
-            ])
-            time.sleep(0.1)
-            df_list.append(df)
-            dt_list.append(dt)
-            num += df.shape[0]
-            print(f'{cls.__name__} dt:{dt}, cache_num:{num}')
-
-            if num >= 200000:
-                cls.save_to_csv(data_df_list=df_list, dt_list=dt_list, cache=cache)
-                del df_list
-                del dt_list
-                df_list = []
-                dt_list = []
-                num = 0
-        if df_list:
-            cls.save_to_csv(data_df_list=df_list, dt_list=dt_list, cache=cache)
-
-        # 渲染sql
-        t = TemplateUtil(cls.SQL_FILE,
-                         search_list={'data_file_path': PathUtil.get_data_file_ambiguous_name(cls.DATA_FILE)},
-                         cata='ods')
-        print(t.sql)
-        sql_file = t.write_and_get_result_sql_path()
-
-        print(f"sudo -u hive hive -f {sql_file}")
-        exit_code = os.system(f"sudo -u hive hive -f {sql_file}")
+    def get_df(cls, *args, **kwargs):
+        dt = kwargs['dt']
+        return cls.pro.daily_basic(**{
+            "ts_code": "",
+            "trade_date": dt,
+            "start_date": "",
+            "end_date": "",
+            "offset": "",
+            "limit": ""
+        }, fields=[
+            "ts_code",
+            "trade_date",
+            "close",
+            "turnover_rate",
+            "turnover_rate_f",
+            "volume_ratio",
+            "pe",
+            "pe_ttm",
+            "pb",
+            "ps",
+            "ps_ttm",
+            "dv_ratio",
+            "dv_ttm",
+            "total_share",
+            "float_share",
+            "free_share",
+            "total_mv",
+            "circ_mv",
+            "limit_status"
+        ])
 
 
 if __name__ == '__main__':

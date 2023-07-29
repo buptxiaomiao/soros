@@ -10,6 +10,7 @@ class TemplateUtil(object):
 
     def __init__(self, file_name, search_list=None, cata=None):
         self.file_name = file_name
+        self.cata = cata
         self.file_path = PathUtil.get_sql_template_file_name(file_name, cata)
         self.output_path = PathUtil.get_sql_file_name(file_name)
         self.search_list = search_list or dict()
@@ -18,8 +19,17 @@ class TemplateUtil(object):
 
     @property
     def _tpl_str(self):
+        res = ''
+        # hive参数
+        with open(file='hive_param.sql', encoding='utf-8') as f:
+            res += f.read()
+        # ddl
         with open(file=self.file_path, encoding="utf-8") as f:
-            return f.read()
+            res += f.read()
+        if self.cata == 'ods':
+            with open(file='ods_etl_template.sql', encoding='utf-8') as f:
+                res += f.read()
+        return res
 
     def update_search_list(self, k=None, v=None, **kwargs):
         if k and v:
