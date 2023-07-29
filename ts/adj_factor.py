@@ -56,7 +56,6 @@ class AdjFactor(object):
                 "trade_date",
                 "adj_factor"
             ])
-            print(df)
             time.sleep(0.1)
             df_list.append(df)
             dt_list.append(dt)
