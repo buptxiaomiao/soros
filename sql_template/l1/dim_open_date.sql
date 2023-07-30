@@ -90,7 +90,6 @@ from (
         hive_date,
 --         is_open,
         if(dayofweek(hive_date)-1>0, dayofweek(hive_date)-1,7) week_day,
-        weekday(hive_date) as week_day,
         ym,
         y,
         m,
