@@ -94,12 +94,12 @@ from (
         y,
         m,
         d,
-        substr(date_sub(hive_date, if(dayofweek(hive_date)-1>0, dayofweek(hive_date)-1,7)-1), 0, 11) as week_begin_date,
-        substr(date_add(hive_date, 7-if(dayofweek(hive_date)-1>0, dayofweek(hive_date)-1,7)), 0, 11) as week_end_date,
-        substr(trunc(hive_date, 'MM'), 0, 11) as month_begin_date,
-        substr(date_sub(trunc(add_months(hive_date, 1), 'MM'), 1), 0, 11) month_end_date,
-        concat(y, '-01-01') as year_begin_date,
-        concat(y, '-12-31') as year_end_date
+        replace(substr(date_sub(hive_date, if(dayofweek(hive_date)-1>0, dayofweek(hive_date)-1,7)-1), 0, 11), '-', '') as week_begin_date,
+        replace(substr(date_add(hive_date, 7-if(dayofweek(hive_date)-1>0, dayofweek(hive_date)-1,7)), 0, 11), '-', '') as week_end_date,
+        replace(substr(trunc(hive_date, 'MM'), 0, 11), '-', '') as month_begin_date,
+        replace( substr(date_sub(trunc(add_months(hive_date, 1), 'MM'), 1), 0, 11), '-', '') month_end_date,
+        concat(y, '0101') as year_begin_date,
+        concat(y, '1231') as year_end_date
     from (
         select
             cal_date,
