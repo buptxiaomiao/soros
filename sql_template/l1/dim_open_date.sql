@@ -104,15 +104,15 @@ from (
         select
             cal_date,
             concat(
-                substr(cal_date, 0, 4), '-',
-                substr(cal_date, 4, 2), '-',
-                substr(cal_date, 6, 2)
+                substr(cal_date, 1, 4), '-',
+                substr(cal_date, 5, 2), '-',
+                substr(cal_date, 7, 2)
             ) as hive_date,
             is_open,
-            substr(cal_date, 0, 6) as ym,
-            substr(cal_date, 0, 4) as y,
-            substr(cal_date, 4, 2) as m,
-            substr(cal_date, 6, 2) as d
+            substr(cal_date, 1, 6) as ym,
+            substr(cal_date, 1, 4) as y,
+            substr(cal_date, 5, 2) as m,
+            substr(cal_date, 7, 2) as d
         from ods.trade_cal
         where pt_dt = '9999-01-01'
             and is_open = 1
@@ -121,22 +121,22 @@ from (
 left join (
     select
         cal_date,
-        lag(cal_date, 1) over(partition by cal_date order by cal_date asc) pre1_date,
-        lag(cal_date, 2) over(partition by cal_date order by cal_date asc) pre2_date,
-        lag(cal_date, 3) over(partition by cal_date order by cal_date asc) pre3_date,
-        lag(cal_date, 4) over(partition by cal_date order by cal_date asc) pre4_date,
-        lag(cal_date, 5) over(partition by cal_date order by cal_date asc) pre5_date,
-        lag(cal_date, 10) over(partition by cal_date order by cal_date asc) pre10_date,
-        lag(cal_date, 20) over(partition by cal_date order by cal_date asc) pre20_date,
-        lag(cal_date, 60) over(partition by cal_date order by cal_date asc) pre60_date,
-        lag(cal_date, 120) over(partition by cal_date order by cal_date asc) pre120_date,
-        lead(cal_date, 1) over(partition by cal_date order by cal_date asc) next1_date,
-        lead(cal_date, 2) over(partition by cal_date order by cal_date asc) next2_date,
-        lead(cal_date, 3) over(partition by cal_date order by cal_date asc) next3_date,
-        lead(cal_date, 4) over(partition by cal_date order by cal_date asc) next4_date,
-        lead(cal_date, 5) over(partition by cal_date order by cal_date asc) next5_date,
-        lead(cal_date, 10) over(partition by cal_date order by cal_date asc) next10_date,
-        lead(cal_date, 20) over(partition by cal_date order by cal_date asc) next20_date
+        lag(cal_date, 1) over(order by cal_date asc) pre1_date,
+        lag(cal_date, 2) over(order by cal_date asc) pre2_date,
+        lag(cal_date, 3) over(order by cal_date asc) pre3_date,
+        lag(cal_date, 4) over(order by cal_date asc) pre4_date,
+        lag(cal_date, 5) over(order by cal_date asc) pre5_date,
+        lag(cal_date, 10) over(order by cal_date asc) pre10_date,
+        lag(cal_date, 20) over(order by cal_date asc) pre20_date,
+        lag(cal_date, 60) over(order by cal_date asc) pre60_date,
+        lag(cal_date, 120) over(order by cal_date asc) pre120_date,
+        lead(cal_date, 1) over(order by cal_date asc) next1_date,
+        lead(cal_date, 2) over(order by cal_date asc) next2_date,
+        lead(cal_date, 3) over(order by cal_date asc) next3_date,
+        lead(cal_date, 4) over(order by cal_date asc) next4_date,
+        lead(cal_date, 5) over(order by cal_date asc) next5_date,
+        lead(cal_date, 10) over(order by cal_date asc) next10_date,
+        lead(cal_date, 20) over(order by cal_date asc) next20_date
     from ods.trade_cal
     where pt_dt = '9999-01-01'
         and is_open=1
