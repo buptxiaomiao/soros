@@ -27,8 +27,9 @@ class BaseTask(object):
 
     @classmethod
     def run_by_dt(cls):
-        cls.save_data_by_dt()
-        cls.render_and_exec()
+        total_num = cls.save_data_by_dt()
+        if total_num:
+            cls.render_and_exec()
 
     @classmethod
     def run_no_dt(cls):
@@ -51,6 +52,7 @@ class BaseTask(object):
         df_list = []
         dt_list = []
         num = 0
+        total_num = 0
         for dt in date_list:
             if cache.check_pickle_exist(dt):
                 continue
@@ -62,6 +64,7 @@ class BaseTask(object):
             df_list.append(df)
             dt_list.append(dt)
             num += df.shape[0]
+            total_num += df.shape[0]
             print(f'{cls.__name__} dt:{dt}, cache_num:{num}')
 
             if num >= 200000:
@@ -73,6 +76,8 @@ class BaseTask(object):
                 num = 0
         if df_list:
             cls.slice_save_to_csv(data_df_list=df_list, dt_list=dt_list, cache=cache)
+
+        return total_num
 
     @classmethod
     def save_to_csv(cls, df, suffix=None):

@@ -52,9 +52,6 @@ class LocalPickleUtil(object):
         a.commit()
         del a
 
-    def __del__(self):
-        print("触发del")
-
 
 if __name__ == '__main__':
     a = LocalPickleUtil(LocalPickleUtil)
