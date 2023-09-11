@@ -56,13 +56,17 @@ class BaseTask(object):
         for dt in date_list:
             if cache.check_pickle_exist(dt):
                 continue
-            cache.add_pickle(dt)
 
             df = cls.get_df(dt=dt)
             if cls.SLEEP_SECONDS:
                 time.sleep(cls.SLEEP_SECONDS)
             df_list.append(df)
             dt_list.append(dt)
+            if df.shape[0] > 0:
+                cache.add_pickle(dt)
+            else:
+                continue
+
             num += df.shape[0]
             total_num += df.shape[0]
             print(f'{cls.__name__} dt:{dt}, cache_num:{num}')
