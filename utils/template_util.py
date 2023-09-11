@@ -21,13 +21,13 @@ class TemplateUtil(object):
     def _tpl_str(self):
         res = ''
         # hive参数
-        with open(file='hive_param.sql', encoding='utf-8') as f:
+        with open(file=PathUtil.get_sql_template_file_name('hive_param.sql'), encoding='utf-8') as f:
             res += f.read()
         # ddl
         with open(file=self.file_path, encoding="utf-8") as f:
             res += f.read()
         if self.cata == 'ods':
-            with open(file='ods_etl_template.sql', encoding='utf-8') as f:
+            with open(file=PathUtil.get_sql_template_file_name('ods_etl_template.sql', cata='ods'), encoding='utf-8') as f:
                 res += f.read()
         return res
 
