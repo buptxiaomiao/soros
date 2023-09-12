@@ -57,7 +57,7 @@ select
     t1.amount,
     t2.turnover_rate,
     t2.turnover_rate_f,
-    t1.change_pct,
+    t1.pct_chg as change_pct,
 
     round(t1.open * adj.factor, 2) as open_qfq,
     round(t1.high * adj.factor, 2) as high_qfq,
