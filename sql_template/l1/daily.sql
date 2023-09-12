@@ -63,7 +63,7 @@ select
     round(t1.high * adj.factor, 2) as high_qfq,
     round(t1.low * adj.factor, 2) as low_qfq,
     round(t1.close * adj.factor, 2) as close_qfq,
-    round(t1.preclose * adj.factor, 2) as preclose_qfq,
+    round(t1.pre_close * adj.factor, 2) as preclose_qfq,
     round(t1.vol * adj.factor, 2) as vol_qfq,
     round(t1.change * adj.factor, 2) as change_qfq,
 
@@ -71,7 +71,7 @@ select
     t1.high as high_real,
     t1.low as low_real,
     t1.close as close_real,
-    t1.preclose as preclose_real,
+    t1.pre_close as preclose_real,
     t1.vol as vol_real,
     t1.change as change_real
 
