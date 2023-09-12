@@ -1,4 +1,5 @@
 
+drop table if exists l1.daily;
 -- ddl
 create table if not exists l1.daily (
     ts_code             string      comment 'TS代码',
@@ -10,6 +11,10 @@ create table if not exists l1.daily (
 
     total_mv            float       comment '总市值（亿元）',
     circ_mv             float       comment '流通市值（亿元）',
+    total_share         float       comment '总股本（万股）',
+    float_share         float       comment '流通股本（万股）',
+    free_share          float       comment '自由流通股本（万股），剔除5%以上',
+
     amount              float       comment '成交额（万元）',
     turnover_rate       float       comment '换手率（%）',
     turnover_rate_f     float       comment '换手率（自由流通股）',
@@ -42,8 +47,13 @@ select
     dim_stock.market,
     dim_stock.is_hs,
     t1.trade_date,
-    t2.total_mv,
-    t2.total_mv_wan,
+
+    round(t2.total_mv / 10000, 1) as total_mv,
+    round(t2.circ_mv / 10000, 1) as circ_mv,
+    t2.total_share,
+    t2.float_share,
+    t2.free_share,
+
     t1.amount,
     t2.turnover_rate,
     t2.turnober_rate_f,
