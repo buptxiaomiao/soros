@@ -79,6 +79,8 @@ from (
     select *
     from ods.daily
     where pt_dt = '9999-01-01'
+        and ts_code != 'ts_code'
+        and trade_date != 'trade_date'
 ) t1
 
 left join (
