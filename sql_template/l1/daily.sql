@@ -54,7 +54,7 @@ select
     t2.float_share,
     t2.free_share,
 
-    t1.amount,
+    round(t1.amount / 10, 0) as amount,
     t2.turnover_rate,
     t2.turnover_rate_f,
     t1.pct_chg as change_pct,
