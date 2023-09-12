@@ -56,7 +56,7 @@ select
 
     t1.amount,
     t2.turnover_rate,
-    t2.turnober_rate_f,
+    t2.turnover_rate_f,
     t1.change_pct,
 
     round(t1.open * adj.factor, 2) as open_qfq,
