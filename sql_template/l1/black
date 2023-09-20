@@ -1,0 +1,21 @@
+
+SELECT *
+FROM
+  (SELECT *,
+          row_number() over(PARTITION BY ts_code
+                            ORDER BY trade_date DESC) r,
+                       sum(amount) over(PARTITION BY ts_code
+                                        ORDER BY trade_date ASC ROWS BETWEEN 4 preceding AND CURRENT ROW) amt,
+                                        min(close_qfq) over(PARTITION BY ts_code
+                                        ORDER BY trade_date ASC ROWS BETWEEN 59 preceding AND CURRENT ROW) min_close60,
+                                        min(close_qfq) over(PARTITION BY ts_code
+                                        ORDER BY trade_date ASC ROWS BETWEEN 1 preceding AND CURRENT ROW) min_close2
+   FROM l1.daily
+   WHERE trade_date >= format_datetime(date_add('day', -100, CURRENT_DATE), 'yyyyMMdd') ) t
+WHERE r =1
+  AND name NOT LIKE '%ST%'
+  AND ts_code != 'ts_code'
+  AND close_real >= 5
+  AND market != '北交所'
+  AND (amt > 30000 or amount > 10000)
+  and min_close60 != min_close2

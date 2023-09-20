@@ -13,7 +13,9 @@ class L1Task(BaseTask):
         conf_list = [
             'dim_stock.sql',
             'dim_open_date.sql',
-            'daily.sql'
+            'fact_stock_daily.sql',
+            'fact_stock_future_change.sql',
+            'fact_stock_tag_price_prev.sql'
         ]
         for name in conf_list:
             cls.render_and_exec_l1(name)

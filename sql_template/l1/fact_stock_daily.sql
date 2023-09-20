@@ -1,7 +1,7 @@
 
-drop table if exists l1.daily;
+drop table if exists l1.fact_stock_daily;
 -- ddl
-create table if not exists l1.daily (
+create table if not exists l1.fact_stock_daily (
     ts_code             string      comment 'TS代码',
     name                string      comment '股票名称',
     industry            string      comment '股票行业',
@@ -39,7 +39,7 @@ create table if not exists l1.daily (
 stored as orc;
 
 
-insert overwrite table l1.daily
+insert overwrite table l1.fact_stock_daily
 select
     t1.ts_code,
     dim_stock.name,
