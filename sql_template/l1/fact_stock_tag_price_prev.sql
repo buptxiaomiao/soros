@@ -6,6 +6,7 @@ comment 'l1标签-近期价格标签' stored as orc as
 
 SELECT
     ts_code,
+    name,
     trade_date,
     close_qfq,
     is_min_close_qfq3,
@@ -42,6 +43,7 @@ from (
     SELECT
         trade_date,
         ts_code,
+        name,
         close_qfq,
         if(close_qfq = min_close3, 1, 0) as is_min_close_qfq3,
         if(close_qfq = min_close5, 1, 0) as is_min_close_qfq5,
@@ -70,6 +72,7 @@ from (
     from (
         SELECT
             ts_code,
+            name,
             trade_date,
             close_qfq,
             min(close_qfq) over(PARTITION BY ts_code ORDER BY trade_date ASC ROWS BETWEEN 2 preceding AND CURRENT ROW) min_close3,
