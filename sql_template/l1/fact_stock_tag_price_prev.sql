@@ -1,9 +1,51 @@
 drop table if exists l1.fact_stock_tag_price_prev;
 
-create table if not exists l1.fact_stock_tag_price_prev
+create table if not exists l1.fact_stock_tag_price_prev(
+    ts_code             string  comment 'TS代码',
+    name                string  comment '股票名称',
+    trade_date          string  comment '交易日期',
+    close_qfq           tinyint comment '收盘价-TS前复权',
+    is_min_close_qfq3   tinyint comment '是否近3日最低-收盘价',
+    is_min_close_qfq5   tinyint comment '是否近5日最低-收盘价',
+    is_min_close_qfq10  tinyint comment '是否近10日最低-收盘价',
+    is_min_close_qfq20  tinyint comment '是否近20日最低-收盘价',
+    is_min_close_qfq60  tinyint comment '是否近60日最低收盘价',
 
-comment 'l1标签-近期价格标签' stored as orc as
+    is_max_close_qfq3   tinyint comment '是否近3日最高-收盘价',
+    is_max_close_qfq5   tinyint comment '是否近5日最高-收盘价',
+    is_max_close_qfq10  tinyint comment '是否近10日最高-收盘价',
+    is_max_close_qfq20  tinyint comment '是否近20日最高-收盘价',
+    is_max_close_qfq60  tinyint comment '是否近60日最高-收盘价',
+    low_qfq             float   comment '最低价-TS前复权',
+    is_min_low_qfq3     tinyint comment '是否近3日新低-盘中最低价',
+    is_min_low_qfq5     tinyint comment '是否近5日新低-盘中最低价',
+    is_min_low_qfq10    tinyint comment '是否近10日新低-盘中最低价',
+    is_min_low_qfq20    tinyint comment '是否近20日新低-盘中最低价',
+    is_min_low_qfq60    tinyint comment '是否近60日新低-盘中最低价',
+    high_qfq            float   comment '最高价-TS前复权',
+    is_max_high_qfq3    tinyint comment '是否近3天新高-盘中最高价',
+    is_max_high_qfq5    tinyint comment '是否近5天新高-盘中最高价',
+    is_max_high_qfq10   tinyint comment '是否近10天新高-盘中最高价',
+    is_max_high_qfq20   tinyint comment '是否近20天新高-盘中最高价',
+    is_max_high_qfq60   tinyint comment '是否近60天新高-盘中最高价',
 
+    is_pre3_min_close60     tinyint comment '近3日有过近60日最低收盘价',
+    is_pre5_min_close60     tinyint comment '近5日有过近60日最低收盘价',
+    is_pre10_min_close60    tinyint comment '近10日有过近60日最低收盘价',
+    is_pre3_max_close60     tinyint comment '近3日有过近60日最高收盘价',
+    is_pre5_max_close60     tinyint comment '近5日有过近60日最高收盘价',
+    is_pre10_max_close60    tinyint comment '近10日有过近60日最高收盘价',
+
+    is_pre3_min_low60   tinyint comment '近3日有过近60日最低价-盘中最低价',
+    is_pre5_min_low60   tinyint comment '近5日有过近60日最低价-盘中最低价',
+    is_pre10_min_low60  tinyint comment '近10日有过近60日最低价-盘中最低价',
+    is_pre3_max_high60  tinyint comment '近3日有过近60日最高价-盘中最高价',
+    is_pre5_max_high60  tinyint comment '近5日有过近60日最高价-盘中最高价',
+    is_pre10_max_high60 tinyint comment '近10日有过近60日最高价-盘中最高价'
+)
+comment 'l1标签-近期价格标签' stored as orc;
+
+insert overwrite table l1.fact_stock_tag_price_prev
 SELECT
     ts_code,
     name,
@@ -32,6 +74,13 @@ SELECT
     is_max_high_qfq10,
     is_max_high_qfq20,
     is_max_high_qfq60,
+
+    if(is_min_close_qfq3 = is_min_close_qfq60, 1, 0) as is_pre3_min_close60,
+    if(is_min_close_qfq5 = is_min_close_qfq60, 1, 0) as is_pre5_min_close60,
+    if(is_min_close_qfq10 = is_min_close_qfq60, 1, 0) as is_pre10_min_close60,
+    if(is_max_close_qfq3 = is_max_close_qfq60, 1, 0) as is_pre3_max_close60,
+    if(is_max_close_qfq5 = is_max_close_qfq60, 1, 0) as is_pre5_max_close60,
+    if(is_max_close_qfq10 = is_max_close_qfq60, 1, 0) as is_pre10_max_close60,
 
     if(is_min_low_qfq3 = is_min_low_qfq60, 1, 0) as is_pre3_min_low60,
     if(is_min_low_qfq5 = is_min_low_qfq60, 1, 0) as is_pre5_min_low60,
@@ -97,7 +146,7 @@ from (
             max(high_qfq) over(PARTITION BY ts_code ORDER BY trade_date ASC ROWS BETWEEN 9 preceding AND CURRENT ROW) max_high10,
             max(high_qfq) over(PARTITION BY ts_code ORDER BY trade_date ASC ROWS BETWEEN 19 preceding AND CURRENT ROW) max_high20,
             max(high_qfq) over(PARTITION BY ts_code ORDER BY trade_date ASC ROWS BETWEEN 59 preceding AND CURRENT ROW) max_high60
-        FROM l1.daily
+        FROM l1.fact_stock_daily
     )  t
 ) tt
 
