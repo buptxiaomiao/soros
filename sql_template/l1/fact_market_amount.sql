@@ -10,7 +10,9 @@ create table if not exists l1.fact_market_amount (
     amount              float       comment '成交额（万元）',
     vr                  float       comment '量比'
 ) comment '大盘成交量'
-as
+stored as orc;
+
+insert overwrite table l1.fact_market_amount
 select
     trade_date,
     market,
