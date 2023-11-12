@@ -15,7 +15,8 @@ class L1Task(BaseTask):
             'dim_open_date.sql',
             'fact_stock_daily.sql',
             'fact_stock_future_change.sql',
-            'fact_stock_tag_price_prev.sql'
+            'fact_stock_tag_price_prev.sql',
+            'fact_market_amount.sql',
         ]
         for name in conf_list:
             cls.render_and_exec_l1(name)

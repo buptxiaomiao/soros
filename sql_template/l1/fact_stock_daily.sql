@@ -20,6 +20,8 @@ create table if not exists l1.fact_stock_daily (
     turnover_rate_f     float       comment '换手率（自由流通股）',
     change_pct          float       comment '涨跌百分比',
 
+    volume_ratio        float       comment '量比',
+
     open_qfq            float       comment '开盘价-前复权',
     high_qfq            float       comment '最高价-前复权',
     low_qfq             float       comment '最低价-前复权',
@@ -58,6 +60,7 @@ select
     t2.turnover_rate,
     t2.turnover_rate_f,
     t1.pct_chg as change_pct,
+    t2.volume_ratio,
 
     round(t1.open * adj.factor, 2) as open_qfq,
     round(t1.high * adj.factor, 2) as high_qfq,
