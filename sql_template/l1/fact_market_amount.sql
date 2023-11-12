@@ -29,7 +29,6 @@ from (
         sum(amount) as amount
     from l1.fact_stock_daily
     where market != '北交所'
-        and trade_date >= '20231001'
     group by trade_date, market
     grouping sets(
         (trade_date),
