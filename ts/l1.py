@@ -17,6 +17,7 @@ class L1Task(BaseTask):
             'fact_stock_future_change.sql',
             'fact_stock_tag_price_prev.sql',
             'fact_market_amount.sql',
+            'fact_stock_money_flow.sql',
         ]
         for name in conf_list:
             cls.render_and_exec_l1(name)
