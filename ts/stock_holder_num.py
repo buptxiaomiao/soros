@@ -2,6 +2,7 @@
 
 from base_task import BaseTask
 from utils.now import Now
+from utils.local_dim_util import LocalDimUtil
 
 
 class StockHolderNum(BaseTask):
@@ -18,8 +19,8 @@ class StockHolderNum(BaseTask):
     @classmethod
     def get_date_df(cls):
         """初始化后，增量每次只跑近200天"""
-        df = BaseTask.get_date_df()
-        df = df[df['cal_date'] >= int(Now().delta(200).datekey)]
+        df = LocalDimUtil.get_date_df(is_open=False)
+        # df = df[df['cal_date'] >= int(Now().delta(200).datekey)]
         return df
 
     @classmethod
