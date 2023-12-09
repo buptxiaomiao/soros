@@ -17,9 +17,9 @@ class StockHolderNum(BaseTask):
 
     @classmethod
     def get_date_df(cls):
-        """初始话后，每次只跑近200天"""
+        """初始化后，增量每次只跑近200天"""
         df = BaseTask.get_date_df()
-        # df = df[df['cal_date'] >= int(Now().delta(200).datekey)]
+        df = df[df['cal_date'] >= int(Now().delta(200).datekey)]
         return df
 
     @classmethod
