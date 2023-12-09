@@ -20,7 +20,7 @@ class StockHolderNum(BaseTask):
     def get_date_df(cls):
         """初始化后，增量每次只跑近200天"""
         df = LocalDimUtil.get_date_df(is_open=False)
-        # df = df[df['cal_date'] >= int(Now().delta(200).datekey)]
+        df = df[df['cal_date'] >= int(Now().delta(200).datekey)]
         return df
 
     @classmethod

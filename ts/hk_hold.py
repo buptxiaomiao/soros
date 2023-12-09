@@ -9,7 +9,7 @@ class HkHold(BaseTask):
 
     DATA_FILE = 'hk_hold.csv'
     SQL_FILE = 'hk_hold.sql'
-    SLEEP_SECONDS = 0.2
+    SLEEP_SECONDS = 1
 
     @classmethod
     def run(cls):
