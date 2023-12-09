@@ -42,10 +42,14 @@ class BaseTask(object):
         raise NotImplementedError
 
     @classmethod
+    def get_date_df(cls):
+        return LocalDimUtil.get_date_df()
+
+    @classmethod
     def save_data_by_dt(cls, check_cache=True):
 
         cache = LocalPickleUtil(cls)
-        date_df = LocalDimUtil.get_date_df()
+        date_df = cls.get_date_df()
 
         date_list = date_df['cal_date'].to_list()
 
