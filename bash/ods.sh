@@ -12,3 +12,4 @@ python daily.py
 python daily_basic.py
 python money_flow.py
 python adj_factor.py
+python stock_holder_num.py
