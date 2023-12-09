@@ -26,8 +26,8 @@ class BaseTask(object):
         raise NotImplementedError
 
     @classmethod
-    def run_by_dt(cls):
-        total_num = cls.save_data_by_dt()
+    def run_by_dt(cls, check_cache=True):
+        total_num = cls.save_data_by_dt(check_cache)
         if total_num:
             cls.render_and_exec()
 
@@ -42,7 +42,7 @@ class BaseTask(object):
         raise NotImplementedError
 
     @classmethod
-    def save_data_by_dt(cls):
+    def save_data_by_dt(cls, check_cache=True):
 
         cache = LocalPickleUtil(cls)
         date_df = LocalDimUtil.get_date_df()
@@ -54,8 +54,9 @@ class BaseTask(object):
         num = 0
         total_num = 0
         for dt in date_list:
-            if cache.check_pickle_exist(dt):
-                continue
+            if check_cache:
+                if cache.check_pickle_exist(dt):
+                    continue
 
             df = cls.get_df(dt=dt)
             if cls.SLEEP_SECONDS:
