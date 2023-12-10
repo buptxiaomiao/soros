@@ -9,6 +9,7 @@ create table if not exists l1.fact_stock_money_flow (
     is_hs               string      comment '是否是沪深股通: H/S',
 
     circ_mv             float       comment '流通市值（亿元）',
+    close_qfq           float       comment '当日收盘价',
     change_pct          float       comment '涨跌百分比',
     volume_ratio        float       comment '量比',
     total_vol           float       comment '总成交量（手）',
@@ -59,6 +60,7 @@ select
     market,
     is_hs,
     circ_mv,
+    close_qfq,
     change_pct,
     volume_ratio,
     total_vol,
@@ -108,6 +110,7 @@ from (
         daily.circ_mv,
         daily.change_pct,
         daily.volume_ratio,
+        daily.close_qfq,
         (buy_sm_vol + buy_md_vol + buy_lg_vol + buy_elg_vol) as total_vol,
         (buy_sm_amount + buy_md_amount + buy_lg_amount + buy_elg_amount) as total_amount,
 
