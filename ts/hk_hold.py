@@ -2,6 +2,8 @@
 
 import pandas as pd
 from base_task import BaseTask
+from utils.local_dim_util import LocalDimUtil
+from utils.now import Now
 
 
 class HkHold(BaseTask):
@@ -14,6 +16,12 @@ class HkHold(BaseTask):
     @classmethod
     def run(cls):
         return cls.run_by_dt()
+
+    @classmethod
+    def get_date_df(cls):
+        df = LocalDimUtil.get_date_df()
+        df = df[df['cal_date'] >= 20160101]
+        return df
 
     @classmethod
     def get_df(cls, *args, **kwargs):
