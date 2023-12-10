@@ -14,7 +14,7 @@ class FinaMainBiz(BaseTask):
     def run(cls):
         # by stock
         # 写文件、上传文件，都需check
-        pass
+        cls.run_by_stock()
 
     @classmethod
     def get_df(cls, *args, **kwargs):

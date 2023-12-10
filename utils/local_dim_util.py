@@ -10,9 +10,8 @@ class LocalDimUtil(object):
     @classmethod
     def get_stock_df(cls):
         df = pd.read_csv('../ts/data/stock_basic.csv', sep='\u0001', header=0)
-        print(df)
-        print(df['ts_code'].to_list())
-        print('done')
+        print(df.head())
+        return df
 
     @classmethod
     def get_date_df(cls, is_open=True):

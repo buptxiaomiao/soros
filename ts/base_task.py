@@ -32,6 +32,12 @@ class BaseTask(object):
             cls.render_and_exec()
 
     @classmethod
+    def run_by_stock(cls):
+        total_num = cls.save_data_by_stock()
+        if total_num:
+            cls.render_and_exec()
+
+    @classmethod
     def run_no_dt(cls):
         df = cls.get_df()
         cls.save_to_csv(df)
@@ -85,6 +91,37 @@ class BaseTask(object):
                 num = 0
         if df_list:
             cls.slice_save_to_csv(data_df_list=df_list, dt_list=dt_list, cache=cache)
+
+        return total_num
+
+    @classmethod
+    def save_data_by_stock(cls):
+        stock_df = LocalDimUtil.get_stock_df()
+        stock_list = stock_df['ts_code'].to_list()
+
+        df_list = []
+        dstock_list = []
+        num = 0
+        total_num = 0
+        for ts_code in stock_list:
+            df = cls.get_df(ts_code=ts_code)
+            if cls.SLEEP_SECONDS:
+                time.sleep(cls.SLEEP_SECONDS)
+            df_list.append(df)
+            dstock_list.append(ts_code)
+            num += df.shape[0]
+            total_num += df.shape[0]
+            print(f'{cls.__name__} ts_code:{ts_code}, cache_num:{num}')
+
+            if num >= 200000:
+                cls.slice_save_to_csv(data_df_list=df_list, dt_list=dstock_list)
+                del df_list
+                del dstock_list
+                df_list = []
+                dstock_list = []
+                num = 0
+        if df_list:
+            cls.slice_save_to_csv(data_df_list=df_list, dt_list=dstock_list)
 
         return total_num
 
