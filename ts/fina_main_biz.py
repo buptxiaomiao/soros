@@ -8,7 +8,7 @@ class FinaMainBiz(BaseTask):
 
     DATA_FILE = 'fina_main_biz.csv'
     SQL_FILE = 'fina_main_biz.sql'
-    SLEEP_SECONDS = 0.2
+    SLEEP_SECONDS = 1
 
     @classmethod
     def run(cls):
@@ -26,7 +26,7 @@ class FinaMainBiz(BaseTask):
             "start_date": "",
             "end_date": "",
             "is_publish": "",
-            "limit": 1000,
+            "limit": 2000,
             "offset": ''
         }, fields=[
             "ts_code",
