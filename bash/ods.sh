@@ -15,4 +15,4 @@ python adj_factor.py
 python stock_holder_num.py
 python hk_hold.py
 python moneyflow_hsgt.py
-python fina_main_biz.py
+#python fina_main_biz.py
