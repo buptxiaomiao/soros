@@ -23,7 +23,7 @@ select
     circ_mv,
     free_mv,
     amount,
-    round(amount / lead(amount, 1) over(partition by market order by trade_date asc) - 1, 2) as amount_dod,
+    round(amount / lag(amount, 1) over(partition by market order by trade_date asc) - 1, 2) as amount_dod,
     round(amount * 5 / sum(amount) over(partition by market order by trade_date asc ROWS BETWEEN 5 preceding AND 1 preceding), 2) as vr,
     stock_num,
     up_num,
@@ -31,7 +31,7 @@ select
 from (
     select
         trade_date,
-        if(grouping(market)!=0, market, '全市') as market,
+        if(grouping(market)!=0, market, '京沪深') as market,
         sum(total_mv) as total_mv,
         sum(circ_mv) as circ_mv,
         round(sum(free_share * total_mv / total_share), 1) as free_mv,
