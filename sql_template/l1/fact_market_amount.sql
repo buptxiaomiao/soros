@@ -35,7 +35,7 @@ from (
         sum(total_mv) as total_mv,
         sum(circ_mv) as circ_mv,
         round(sum(free_share * total_mv / total_share), 1) as free_mv,
-        round(sum(amount) / 100, 0) as amount,
+        round(sum(amount) / 10000, 0) as amount,
         count(distinct ts_code) as stock_num,
         count(if(change_pct > 0, 1, null)) as up_num,
         count(if(change_pct < 0, 1, null)) as down_num
