@@ -22,7 +22,10 @@ create table if not exists l1.dim_stock (
     ps              float       comment '市销率',
     `exchange`      string      comment '交易所代码',
     list_status     string      comment '上市状态 L上市 D退市 P暂停上市',
-    symbol          string      comment '股票代码'
+    symbol          string      comment '股票代码',
+    holder_num      bigint      comment '股东户数',
+    holder_ann_date string      comment '股东户数公告日期',
+    holder_end_date string      comment '股东户数截止日期'
 )  comment '股票维表'
 stored as orc;
 
@@ -100,3 +103,18 @@ left join (
     ) a where r = 1
 ) t3
     on t1.ts_code = t3.ts_code
+
+left join (
+    select * from (
+        select
+            ts_code,
+            ann_date,
+            end_date,
+            holder_nums,
+            row_number() over(partition by ts_code order by end_date desc) r
+        from ods.stock_holder_num
+        where pt_dt = '0000-01-01'
+    ) a
+    where r = 1
+) holder
+    on t1.ts_code = holder.ts_code

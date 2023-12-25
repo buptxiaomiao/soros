@@ -28,6 +28,7 @@ select
     stock_num,
     up_num,
     down_num
+    -- todo 北向资金、主力净流入
 from (
     select
         trade_date,
