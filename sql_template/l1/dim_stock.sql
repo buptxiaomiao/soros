@@ -59,7 +59,7 @@ select
     holder.holder_nums,
     holder.ann_date as holder_ann_date,
     holder.end_date as holder_end_date,
-    round(circ_mv / holder.holder_nums, 2) as holder_per_amount_circ
+    round(circ_mv * 10000 / holder.holder_nums, 2) as holder_per_amount_circ
 from (
     select
         ts_code,
