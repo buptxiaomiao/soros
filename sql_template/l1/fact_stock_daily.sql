@@ -20,6 +20,10 @@ create table if not exists l1.fact_stock_daily (
     turnover_rate_f     float       comment '换手率（自由流通股）',
     change_pct          float       comment '涨跌百分比',
 
+    amount_dod          float       comment '成交额环比',
+    up_or_down          string      comment 'up上涨/down下跌/0平盘',
+    red_or_green        string      comment 'red红柱/green绿柱/+十字星',
+
     volume_ratio        float       comment '量比',
 
     open_qfq            float       comment '开盘价-前复权',
@@ -60,6 +64,14 @@ select
     t2.turnover_rate,
     t2.turnover_rate_f,
     t1.pct_chg as change_pct,
+
+    round(t1.amount / lag(t1.amount,1) over(partition by t1.ts_code order by t1.trade_date asc), 2) as amount_dod,
+    case when t1.pct_chg > 0 then 'up'
+        when t1.pct_chg < 0 then 'down'
+        else '0' end as up_or_down,
+    case when t1.close > t1.open then 'red'
+        when t1.close < t1.open then 'green'
+        else '0' end as red_or_green,
     t2.volume_ratio,
 
     round(t1.open * adj.factor, 2) as open_qfq,

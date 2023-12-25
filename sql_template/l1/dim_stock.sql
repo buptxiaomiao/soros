@@ -1,4 +1,5 @@
 
+drop table if exists l1.dim_stock;
 create table if not exists l1.dim_stock (
     ts_code         string      comment 'TS代码',
     name            string      comment '股票名称',
@@ -25,7 +26,8 @@ create table if not exists l1.dim_stock (
     symbol          string      comment '股票代码',
     holder_num      bigint      comment '股东户数',
     holder_ann_date string      comment '股东户数公告日期',
-    holder_end_date string      comment '股东户数截止日期'
+    holder_end_date string      comment '股东户数截止日期',
+    holder_per_amount_circ      float       comment '流通户均持股金额（万）=流通市值/股东户数'
 )  comment '股票维表'
 stored as orc;
 
@@ -53,7 +55,11 @@ select
     ps,
     `exchange`,
     list_status,
-    symbol
+    symbol,
+    holder.holder_nums,
+    holder.ann_date as holder_ann_date,
+    holder.end_date as holder_end_date,
+    round(circ_mv / holder.holder_nums, 2) as holder_per_amount_circ
 from (
     select
         ts_code,
