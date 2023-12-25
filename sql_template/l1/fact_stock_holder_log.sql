@@ -32,7 +32,7 @@ select
     industry,
     market,
     is_hs,
-    holder.is_newest
+    if(holder.r = 1, 1, null) as is_newest
 from l1.dim_stock dim
 join (
     select * from (
@@ -41,9 +41,9 @@ join (
             ann_date,
             end_date,
             holder_nums,
-            row_number() over(partition by ts_code order by end_date desc) is_newest
+            row_number() over(partition by ts_code order by end_date desc) r
         from ods.stock_holder_num
-        where pt_dt = '0000-01-01'
+        where pt_dt = '9999-01-01'
     ) a
 ) holder
     on dim.ts_code = holder.ts_code

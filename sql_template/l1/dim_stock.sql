@@ -24,7 +24,7 @@ create table if not exists l1.dim_stock (
     `exchange`      string      comment '交易所代码',
     list_status     string      comment '上市状态 L上市 D退市 P暂停上市',
     symbol          string      comment '股票代码',
-    holder_num      bigint      comment '股东户数',
+    holder_num      int         comment '股东户数',
     holder_ann_date string      comment '股东户数公告日期',
     holder_end_date string      comment '股东户数截止日期',
     holder_per_amount_circ      float       comment '流通户均持股金额（万）=流通市值/股东户数'
@@ -59,7 +59,7 @@ select
     holder.holder_nums,
     holder.ann_date as holder_ann_date,
     holder.end_date as holder_end_date,
-    round(circ_mv * 10000 / holder.holder_nums, 2) as holder_per_amount_circ
+    round(t3.circ_mv * 10000.0 / cast(holder.holder_nums as float), 2) as holder_per_amount_circ
 from (
     select
         ts_code,
@@ -100,8 +100,8 @@ left join (
             pe_ttm,
             pb,
             ps,
-            total_mv / 10000 as total_mv,
-            circ_mv / 10000  as circ_mv,
+            total_mv / 10000.0 as total_mv,
+            circ_mv / 10000.0  as circ_mv,
             row_number() over(partition by ts_code order by trade_date desc) r
         from ods.daily_basic
         where pt_dt = '9999-01-01'
@@ -119,8 +119,9 @@ left join (
             holder_nums,
             row_number() over(partition by ts_code order by end_date desc) r
         from ods.stock_holder_num
-        where pt_dt = '0000-01-01'
+        where pt_dt = '9999-01-01'
     ) a
     where r = 1
 ) holder
     on t1.ts_code = holder.ts_code
+    and t3.ts_code = holder.ts_code
