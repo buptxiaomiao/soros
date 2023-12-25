@@ -40,7 +40,7 @@ join (
             ts_code,
             ann_date,
             end_date,
-            holder_nums,
+            coalesce(holder_nums, holder_num) as holder_nums,
             row_number() over(partition by ts_code order by end_date desc) r
         from ods.stock_holder_num
         where pt_dt = '9999-01-01'
