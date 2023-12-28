@@ -15,6 +15,14 @@ create table if not exists l1.fact_stock_daily (
     float_share         float       comment '流通股本（万股）',
     free_share          float       comment '自由流通股本（万股），剔除5%以上',
 
+    pe                  float       comment '市盈率（总市值/净利润， 亏损的PE为空）',
+    pe_ttm              float       comment '市盈率（TTM，亏损的PE为空）',
+    pb                  float       comment '市净率（总市值/净资产）',
+    ps                  float       comment '市销率',
+    ps_ttm              float       comment '市销率（TTM）',
+    dv_ratio            float       comment '股息率 （%）',
+    dv_ttm              float       comment '股息率（TTM）（%）',
+
     amount              float       comment '成交额（万元）',
     turnover_rate       float       comment '换手率（%）',
     turnover_rate_f     float       comment '换手率（自由流通股）',
@@ -59,6 +67,14 @@ select
     t2.total_share,
     t2.float_share,
     t2.free_share,
+
+    t2.pe,
+    t2.pe_ttm,
+    t2.pb,
+    t2.ps,
+    t2.ps_ttm,
+    t2.dv_ratio,
+    t2.dv_ttm,
 
     round(t1.amount / 10, 0) as amount,
     t2.turnover_rate,
