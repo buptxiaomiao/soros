@@ -15,7 +15,7 @@ class ThsMember(BaseTask):
 
     @classmethod
     def run(cls):
-        return cls.run_by_dt()
+        return cls.run_no_dt()
 
     @classmethod
     def get_df(cls, *args, **kwargs):
