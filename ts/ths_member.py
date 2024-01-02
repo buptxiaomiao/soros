@@ -36,7 +36,7 @@ class ThsMember(BaseTask):
             "is_new"
         ])
 
-        if df.count < 5000:
+        if df.shape[0] < 5000:
             return df
 
         if cls.SLEEP_SECONDS:
