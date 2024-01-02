@@ -11,7 +11,7 @@ class ThsMember(BaseTask):
     DATA_FILE = 'ths_member.csv'
     SQL_FILE = 'ths_member.sql'
 
-    SLEEP_SECONDS = 0.5
+    SLEEP_SECONDS = 0.2
 
     @classmethod
     def run(cls):
