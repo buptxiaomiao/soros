@@ -15,4 +15,7 @@ python adj_factor.py
 python stock_holder_num.py
 python hk_hold.py
 python moneyflow_hsgt.py
+python ths_index.py
+python ths_daily.py
+python ths_member.py
 #python fina_main_biz.py
