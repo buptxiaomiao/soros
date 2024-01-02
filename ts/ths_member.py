@@ -39,6 +39,8 @@ class ThsMember(BaseTask):
         if df.shape[0] < 5000:
             return df
 
+        print(f'{cls.__name__} limit:{limit}, offset:{offset}')
+
         if cls.SLEEP_SECONDS:
             time.sleep(cls.SLEEP_SECONDS)
         new_offset = limit + offset
