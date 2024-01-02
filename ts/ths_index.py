@@ -24,7 +24,6 @@ class ThsIndex(BaseTask):
         }, fields=[
             "ts_code",
             "name",
-            "count",
             "exchange",
             "list_date",
             "type"
