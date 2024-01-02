@@ -24,8 +24,8 @@ class ThsMember(BaseTask):
         df = cls.pro.ths_member(**{
             "ts_code": "",
             "code": "",
-            "limit": 5000,
-            "offset": 0
+            "limit": limit,
+            "offset": offset
         }, fields=[
             "ts_code",
             "code",
