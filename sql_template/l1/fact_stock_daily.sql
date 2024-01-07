@@ -81,7 +81,7 @@ select
     t2.turnover_rate_f,
     t1.pct_chg as change_pct,
 
-    round(t1.amount / lag(t1.amount,1) over(partition by t1.ts_code order by t1.trade_date asc), 2) as amount_dod,
+    round(t1.amount / lag(t1.amount,1) over(partition by t1.ts_code order by t1.trade_date asc) - 1, 2) as amount_dod,
     case when t1.pct_chg > 0 then 'up'
         when t1.pct_chg < 0 then 'down'
         else '0' end as up_or_down,
