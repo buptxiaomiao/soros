@@ -19,7 +19,9 @@ class L1Task(BaseTask):
             'fact_stock_money_flow.sql',
             'fact_market_amount.sql',
             'fact_stock_holder_log.sql',
-            'dim_rela_ths_stock.sql'
+            'dim_rela_ths_stock.sql',
+            'fact_ths_daily.sql',
+
         ]
         for name in conf_list:
             cls.render_and_exec_l1(name)
