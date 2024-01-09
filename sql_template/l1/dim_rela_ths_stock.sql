@@ -59,6 +59,7 @@ from (
     from ods.ths_index
     where pt_dt = '9999-01-01'
         and `exchange` = 'A'
+        and (type in ('I', 'N') or ts_code = '883957.TI')
 ) ths
 
 left join (

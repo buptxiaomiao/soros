@@ -1,7 +1,7 @@
 
-drop table if exists l1.fact_rela_ths_stock_daily_test;
+drop table if exists l1.fact_rela_ths_stock_daily;
 
-create table if not exists l1.fact_rela_ths_stock_daily_test (
+create table if not exists l1.fact_rela_ths_stock_daily (
 
     trade_date          string      comment '交易日期',
     ts_code             string      comment 'TS代码',
@@ -18,7 +18,7 @@ create table if not exists l1.fact_rela_ths_stock_daily_test (
     change_pct_ths      float       comment '板块涨跌幅'
 );
 
-insert into l1.fact_rela_ths_stock_daily_test
+insert into l1.fact_rela_ths_stock_daily
 select
     stock.trade_date,
     stock.ts_code,
@@ -38,3 +38,4 @@ join l1.dim_rela_ths_stock rela
 join l1.fact_ths_daily ths
     on rela.ths_code = ths.ths_code
     and stock.trade_date = ths.trade_date
+distribute by substring(stock.trade_date, 1, 6)
