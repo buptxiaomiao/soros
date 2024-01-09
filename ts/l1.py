@@ -13,12 +13,18 @@ class L1Task(BaseTask):
         conf_list = [
             'dim_stock.sql',
             'dim_open_date.sql',
+
+            # stock
             'fact_stock_daily.sql',
             'fact_stock_future_change.sql',
             'fact_stock_tag_price_prev.sql',
             'fact_stock_money_flow.sql',
-            'fact_market_amount.sql',
             'fact_stock_holder_log.sql',
+
+            # market
+            'fact_market_amount.sql',
+
+            # ths
             'dim_rela_ths_stock.sql',
             'fact_ths_daily.sql',
 

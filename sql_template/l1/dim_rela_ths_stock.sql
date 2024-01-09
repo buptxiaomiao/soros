@@ -58,7 +58,7 @@ from (
         end as ths_type_str
     from ods.ths_index
     where pt_dt = '9999-01-01'
-        and exchange = 'A'
+        and `exchange` = 'A'
 ) ths
 
 left join (
