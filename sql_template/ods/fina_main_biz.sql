@@ -9,9 +9,9 @@ create table if not exists ods_incr.${table_name} (
     end_date        string      comment '报告期',
     bz_item         string      comment '主营业务项目',
     bz_code         string      comment 'P按产品 D按地区',
-    bz_sales        float       comment '主营业务收入(元)',
-    bz_profit       float       comment '主营业务利润(元)',
-    bz_cost         float       comment '主营业务成本(元)',
+    bz_sales        double       comment '主营业务收入(元)',
+    bz_profit       double       comment '主营业务利润(元)',
+    bz_cost         double       comment '主营业务成本(元)',
     curr_type       string      comment '货币代码',
     update_flag     string      comment '是否更新'
 )  comment '上市公司主营业务构成，分地区和产品两种方式'

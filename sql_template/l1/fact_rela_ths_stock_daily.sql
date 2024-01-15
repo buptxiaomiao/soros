@@ -6,16 +6,16 @@ create table if not exists l1.fact_rela_ths_stock_daily (
     trade_date          string      comment '交易日期',
     ts_code             string      comment 'TS代码',
     name                string      comment '股票名称',
-    change_pct_stock    float       comment '股票涨跌幅',
-    amount              float       comment '股票成交额',
+    change_pct_stock    double       comment '股票涨跌幅',
+    amount              double       comment '股票成交额',
     market              string      comment '市场类型（主板/创业板/科创板/CDR）',
     is_hs               string      comment '是否是沪深股通: H/S',
-    total_mv            float       comment '股票总市值（亿元）',
+    total_mv            double       comment '股票总市值（亿元）',
 
     ths_code            string      comment 'TS代码',
     ths_name            string      comment '名称',
     ths_type            string      comment 'I行业/N概念指数/S特色指数',
-    change_pct_ths      float       comment '板块涨跌幅'
+    change_pct_ths      double       comment '板块涨跌幅'
 );
 
 insert into l1.fact_rela_ths_stock_daily

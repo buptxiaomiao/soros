@@ -8,7 +8,7 @@ create table if not exists ods_incr.${table_name} (
     ts_code         string      comment 'TS代码',
     code            string      comment '股票代码',
     name            string      comment '股票名称',
-    `weight`        float       comment '权重',
+    `weight`        double       comment '权重',
     in_date         string      comment '纳入日期',
     out_date        string      comment '剔除日期',
     `is_new`        string      comment '是否最新Y是N否'

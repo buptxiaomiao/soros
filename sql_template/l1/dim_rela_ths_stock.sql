@@ -13,11 +13,11 @@ create table if not exists l1.dim_rela_ths_stock (
     name            string      comment '股票名称',
     market          string      comment '市场类型（主板/创业板/科创板/CDR）',
     is_hs           string      comment '是否是沪深股通: H/S',
-    `close`         float       comment '最新收盘价',
-    total_mv        float       comment '最新市值(亿)',
-    circ_mv         float       comment '流通市值(亿)',
-    pe_ttm          float       comment '市盈率（TTM，亏损的PE为空）',
-    dv_ttm          float       comment '股息率（TTM）（%）',
+    `close`         double       comment '最新收盘价',
+    total_mv        double       comment '最新市值(亿)',
+    circ_mv         double       comment '流通市值(亿)',
+    pe_ttm          double       comment '市盈率（TTM，亏损的PE为空）',
+    dv_ttm          double       comment '股息率（TTM）（%）',
     holder_num      int         comment '股东户数',
     holder_per_amount_circ      float       comment '流通户均持股金额（万）=流通市值/股东户数'
 )  comment 'DIM-RELA同花顺概念维表'

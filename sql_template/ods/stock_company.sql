@@ -10,7 +10,7 @@ create table if not exists ods_incr.${table_name} (
     chairman        string      comment '法人代表',
     manager         string      comment '总经理',
     secretary       string      comment '董秘',
-    reg_capital	    float      comment '注册资本',
+    reg_capital	    double      comment '注册资本',
     setup_date      string      comment '注册日期',
     province        string      comment '所在省份',
     city            string      comment '所在城市',

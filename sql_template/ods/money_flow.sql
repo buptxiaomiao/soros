@@ -13,27 +13,27 @@ create table if not exists ods_incr.${table_name} (
     trade_date          string      comment '交易日期',
 
     buy_sm_vol          int         comment '小单买入量（手）',
-    buy_sm_amount       float       comment '小单买入金额（万元）',
+    buy_sm_amount       double       comment '小单买入金额（万元）',
     sell_sm_vol         int         comment '小单卖出量（手）',
-    sell_sm_amount      float       comment '小单卖出金额（万元）',
+    sell_sm_amount      double       comment '小单卖出金额（万元）',
 
     buy_md_vol          int         comment '中单买入量（手）',
-    buy_md_amount       float       comment '中单买入金额（万元）',
+    buy_md_amount       double       comment '中单买入金额（万元）',
     sell_md_vol         int         comment '中单卖出量（手）',
-    sell_md_amount      float       comment '中单卖出金额（万元）',
+    sell_md_amount      double       comment '中单卖出金额（万元）',
 
     buy_lg_vol          int         comment '大单买入量（手）',
-    buy_lg_amount       float       comment '大单买入金额（万元）',
+    buy_lg_amount       double       comment '大单买入金额（万元）',
     sell_lg_vol         int         comment '大单卖出量（手）',
-    sell_lg_amount      float       comment '大单卖出金额（万元）',
+    sell_lg_amount      double       comment '大单卖出金额（万元）',
 
     buy_elg_vol         int         comment '特大单买入量（手）',
-    buy_elg_amount      float       comment '特大单买入金额（万元）',
+    buy_elg_amount      double       comment '特大单买入金额（万元）',
     sell_elg_vol        int         comment '特大单卖出量（手）',
-    sell_elg_amount     float       comment '特大单卖出金额（万元）',
+    sell_elg_amount     double       comment '特大单卖出金额（万元）',
 
     net_mf_vol          int       comment '净流入量（手）',
-    net_mf_amount       float       comment '净流入额（万元）',
+    net_mf_amount       double       comment '净流入额（万元）',
     trade_count         int       comment '交易笔数'
 )  comment '个股资金流向 小单：5万以下 中单：5～20万 大单：20～100万 特大单：>=100万'
 partitioned by (

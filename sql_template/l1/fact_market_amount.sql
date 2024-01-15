@@ -3,21 +3,21 @@ drop table if exists l1.fact_market_amount;
 create table if not exists l1.fact_market_amount (
     trade_date          string      comment '交易日期',
     market              string      comment '市场类型（主板/创业板/科创板/北交所/全市）',
-    total_mv            float       comment '总市值（亿元）',
-    circ_mv             float       comment '流通市值（亿元）',
-    free_mv             float       comment '自由流通市值（亿元），剔除5%以上',
-    amount              float       comment '成交额（亿）',
-    amount_dod          float       comment '成交量环比',
-    vr                  float       comment '量比',
+    total_mv            double       comment '总市值（亿元）',
+    circ_mv             double       comment '流通市值（亿元）',
+    free_mv             double       comment '自由流通市值（亿元），剔除5%以上',
+    amount              double       comment '成交额（亿）',
+    amount_dod          double       comment '成交量环比',
+    vr                  double       comment '量比',
     stock_num           int         comment '股票数',
     up_num              int         comment '上涨股票数',
     down_num            int         comment '下跌股票数',
 
-    change_pct_median       float   comment '涨跌中位数',
-    net_in_gte_lg_amount    float   comment '主力净流入（亿）（>20W）',
-    net_in_md_amount        float   comment '中单净流入（亿）（5-20W）',
-    net_in_sm_amount        float   comment '小单净流入（亿）（<5W）',
-    net_in_amount           float   comment '净流入（亿）'
+    change_pct_median       double   comment '涨跌中位数',
+    net_in_gte_lg_amount    double   comment '主力净流入（亿）（>20W）',
+    net_in_md_amount        double   comment '中单净流入（亿）（5-20W）',
+    net_in_sm_amount        double   comment '小单净流入（亿）（<5W）',
+    net_in_amount           double   comment '净流入（亿）'
 ) comment '大盘成交量'
 stored as orc;
 
