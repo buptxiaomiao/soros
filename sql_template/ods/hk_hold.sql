@@ -10,7 +10,7 @@ create table if not exists ods_incr.${table_name} (
     ts_code         string      comment 'TS代码',
     name            string      comment '股票名称',
     vol             bigint      comment '持股数量',
-    ratio           float       comment '持股占比',
+    ratio           double       comment '持股占比',
     `exchange`      string      comment '类型：SH沪股通SZ深港通'
 )  comment '沪深港股通持股明细'
 partitioned by (
