@@ -16,8 +16,8 @@ class L1Task(BaseTask):
 
             # stock
             'fact_stock_daily.sql',
-            'fact_stock_future_change.sql',
-            'fact_stock_tag_price_prev.sql',
+            # 'fact_stock_future_change.sql',
+            # 'fact_stock_tag_price_prev.sql',
             'fact_stock_money_flow.sql',
             'fact_stock_holder_log.sql',
 
