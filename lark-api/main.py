@@ -17,6 +17,7 @@ class Action(object):
                  'cd bash && bash ./ods.sh && cd ../ts && python l1.py >> /root/log/`date +"%F"`.log'
 
 
+
 def create_reply(rep):
     reply = CreateMessageRequest.builder() \
         .receive_id_type("open_id") \
