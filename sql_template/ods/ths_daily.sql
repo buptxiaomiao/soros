@@ -3,7 +3,7 @@
 #set unique_cols = 'ts_code,trade_date'
 #set cols = 'ts_code,trade_date,'
 #set cols += '`close`,`open`,high,low,pre_close,avg_price,change,pct_change,vol,'
-#set cols += 'turnover_rate,total_mv,double_mv,pe_ttm,pb_mrq'
+#set cols += 'turnover_rate,total_mv,float_mv,pe_ttm,pb_mrq'
 
 -- ddl
 create table if not exists ods_incr.${table_name} (
