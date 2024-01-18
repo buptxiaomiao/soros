@@ -68,6 +68,7 @@ from (
     from ods.ths_index
     where pt_dt = '9999-01-01'
         and `exchange` = 'A'
+        and type not in ('R', 'S')
 ) dim
 join (
     select *

@@ -13,8 +13,7 @@ class Action(object):
 
     SHUTDOWN_NOW = "shutdown now"
 
-    START_TASK = 'cd /root/github/soros && git pull gitlee master && ' \
-                 'cd bash && bash ./ods.sh && cd ../ts && python l1.py >> /root/log/`date +"%F"`.log'
+    START_TASK = 'nohup bash /root/github/soros/bash/run.sh &'
 
 
 def create_reply(rep):

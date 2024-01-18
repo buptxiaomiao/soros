@@ -28,6 +28,9 @@ class L1Task(BaseTask):
             'dim_rela_ths_stock.sql',
             'fact_ths_daily.sql',
 
+            'topic_stock_daily',
+            'topic_ths_daily',
+
         ]
         for name in conf_list:
             cls.render_and_exec_l1(name)
