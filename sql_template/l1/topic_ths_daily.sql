@@ -9,7 +9,9 @@ create table if not exists l1.topic_ths_daily (
     ths_type_str    string      comment '概念/行业/地域/特色',
 
     value_map       map<int, double>    comment '净值map,以今日key=0为基准1,昨日key=-1,明日key=1',
-    change_pct_map  map<int, double>    comment '涨跌幅map'
+    change_pct_map  map<int, double>    comment '涨跌幅map',
+
+    is_newest           tinyint             comment '是否最新'
 
 )  comment '同花顺概念行情'
 stored as orc;
@@ -87,5 +89,7 @@ select
         -18,  lag(change_pct, 18) over(partition by ths_code order by trade_date asc),
         -19,  lag(change_pct, 19) over(partition by ths_code order by trade_date asc),
         -20,  lag(change_pct, 20) over(partition by ths_code order by trade_date asc)
-        ) as change_pct_map
+        ) as change_pct_map,
+
+    if(rank() over(partition by ts_code order by trade_date desc) = 1, 1, null) as is_newest
 from l1.fact_ths_daily

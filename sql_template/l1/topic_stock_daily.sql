@@ -16,7 +16,9 @@ create table if not exists l1.topic_stock_daily (
     amount_map          map<int, double>     comment '-20~10',
     amount_dod_map      map<int, double>     comment '-20~10',
     change_pct_map      map<int, double>     comment '-20~10', -- 对比日alpha
-    volume_ratio_map    map<int, double>     comment '量比'
+    volume_ratio_map    map<int, double>     comment '量比',
+
+    is_newest           tinyint             comment '是否最新'
 
 --     up_or_down          string      comment 'up上涨/down下跌/0平盘',
 --     up_or_down_map      map<int, float>     comment '-20~10',
@@ -205,6 +207,9 @@ select
         -18,  lag(volume_ratio, 18) over(partition by ts_code order by trade_date asc),
         -19,  lag(volume_ratio, 19) over(partition by ts_code order by trade_date asc),
         -20,  lag(volume_ratio, 20) over(partition by ts_code order by trade_date asc)
-        ) as volume_ratio_map
+        ) as volume_ratio_map,
+
+
+    if(rank() over(partition by ts_code order by trade_date desc) = 1, 1, null) as is_newest
 
 from l1.fact_stock_daily
