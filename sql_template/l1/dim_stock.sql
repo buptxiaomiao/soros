@@ -97,6 +97,8 @@ from (
         if(is_hs in ('H', 'S'), is_hs, null) is_hs
     from ods.stock_basic
     where pt_dt = '9999-01-01'
+        and name != '经纬纺机'
+        and name not like '%退%'
 ) t1
 left join (
     select
