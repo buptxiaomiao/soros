@@ -2,7 +2,7 @@
 #set table_name = 'daily_basic'
 #set unique_cols = 'ts_code,trade_date'
 #set cols = 'ts_code,trade_date,`close`,turnover_rate,turnover_rate_f,`volume_ratio`,pe,`pe_ttm`,pb,ps,ps_ttm,'
-#set cols += 'dv_ratio,dv_ttm,total_share,double_share,free_share,total_mv,circ_mv,limit_status'
+#set cols += 'dv_ratio,dv_ttm,total_share,float_share,free_share,total_mv,circ_mv,limit_status'
 
 -- ddl
 create table if not exists ods_incr.${table_name} (
