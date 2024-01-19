@@ -30,7 +30,16 @@ create table if not exists l1.dim_stock (
     holder_num      int         comment '股东户数',
     holder_ann_date string      comment '股东户数公告日期',
     holder_end_date string      comment '股东户数截止日期',
-    holder_per_amount_circ      double       comment '流通户均持股金额（万）=流通市值/股东户数'
+    holder_per_amount_circ      double       comment '流通户均持股金额（万）=流通市值/股东户数',
+
+    ths_industry    string      comment '同花顺行业',
+    ths_concept     string      comment '同花顺概念',
+    is_hs300        tinyint     comment '沪深300成分股',
+    is_a50          tinyint     comment 'A50',
+    is_zz500        tinyint     comment '中证500',
+    is_margin       tinyint     comment '融资融券',
+    is_msci         tinyint     comment 'MSCI成分股'
+
 )  comment '股票维表'
 stored as orc;
 
@@ -65,7 +74,15 @@ select
     holder.holder_nums,
     holder.ann_date as holder_ann_date,
     holder.end_date as holder_end_date,
-    round(t3.circ_mv * 10000.0 / cast(holder.holder_nums as float), 2) as holder_per_amount_circ
+    round(t3.circ_mv * 10000.0 / cast(holder.holder_nums as float), 2) as holder_per_amount_circ,
+
+    ths.ths_industry,
+    ths.ths_concept,
+    ths.is_hs300,
+    ths.is_a50,
+    ths.is_zz500,
+    ths.is_margin,
+    ths.is_msci
 from (
     select
         ts_code,
@@ -133,4 +150,38 @@ left join (
     where r = 1
 ) holder
     on t1.ts_code = holder.ts_code
-    and t3.ts_code = holder.ts_code
+
+left join (
+    select
+        ts_code,
+        concat_ws(',', collect_set(if(ths_type='I', ths_name, null))) as ths_industry,
+        concat_ws(',', collect_set(if(ths_type='R' and ths_type not in (
+            '沪深300样本股', '上证50样本股', '中证500成份股', '融资融券', 'MSCI概念', '标普道琼斯A股', '三季报预增',
+            '上证380成份股', '注册制次新股', '新股与次新股', 'ST板块'
+            ), ths_name, null))) as ths_concept,
+        max(if(ths_name='沪深300样本股', 1, null)) as is_hs300,
+        max(if(ths_name='上证50样本股', 1, null)) as is_a50,
+        max(if(ths_name='中证500成份股', 1, null)) as is_zz500,
+        max(if(ths_name='融资融券', 1, null)) as is_margin,
+        max(if(ths_name='MSCI概念', 1, null)) as is_msci
+
+    from (
+        select
+            a.ts_code as ths_code,
+            a.name    as ths_name,
+            b.code    as ts_code,
+            a.type    as ths_type
+        from ods.ths_index a
+        join ods.ths_member b
+            on a.ts_code = b.ts_code
+        where 1 = 1
+            and a.pt_dt = '0000-01-01'
+            and b.pt_dt = '0000-01-01'
+            and a.`exchange` = 'A'
+            and a.type in ('I', 'R')
+            and b.is_new = 'Y'
+    ) t
+    group by ts_code
+
+) ths
+    on t1.ts_code = ths.ts_code

@@ -62,7 +62,7 @@ from (
         and (type in ('I', 'N') or ts_code = '883957.TI')
 ) ths
 
-left join (
+join (
     select
         ts_code as ths_code,
         code as ts_code,
@@ -73,6 +73,6 @@ left join (
 ) rela
     on ths.ths_code = rela.ths_code
 
-left join l1.dim_stock stock
+join l1.dim_stock stock
     on rela.ts_code = stock.ts_code
 
