@@ -157,7 +157,7 @@ left join (
     select
         ts_code,
         concat_ws(',', collect_set(if(ths_type='I', ths_name, null))) as ths_industry,
-        concat_ws(',', collect_set(if(ths_type='R' and ths_type not in (
+        concat_ws(',', collect_set(if(ths_type='N' and ths_type not in (
             '沪深300样本股', '上证50样本股', '中证500成份股', '融资融券', 'MSCI概念', '标普道琼斯A股', '三季报预增',
             '上证380成份股', '注册制次新股', '新股与次新股', 'ST板块'
             ), ths_name, null))) as ths_concept,
