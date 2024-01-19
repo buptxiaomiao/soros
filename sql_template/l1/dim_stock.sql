@@ -180,7 +180,7 @@ left join (
             and a.pt_dt = '0000-01-01'
             and b.pt_dt = '0000-01-01'
             and a.`exchange` = 'A'
-            and a.type in ('I', 'R')
+            and a.type in ('I', 'N')
             and b.is_new = 'Y'
     ) t
     group by ts_code
