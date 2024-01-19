@@ -31,7 +31,7 @@ create table if not exists l1.fact_stock_daily (
 
     amount_dod          double       comment '成交额环比',
     up_or_down          string      comment 'up上涨/down下跌/0平盘',
-    red_or_green        string      comment 'red红柱/green绿柱/+十字星',
+    red_or_green        string      comment 'red红柱/green绿柱/-',
 
     candle_up_rate      double       comment '上影线占比',
     candle_solid_rate   double       comment '蜡烛实体占比',
@@ -93,7 +93,7 @@ select
         else '0' end as up_or_down,
     case when t1.close > t1.open then 'red'
         when t1.close < t1.open then 'green'
-        else '0' end as red_or_green,
+        else '-' end as red_or_green,
 
     if(t1.high - t1.low > 0, round((t1.high - greatest(t1.close, t1.open)) / (t1.high - t1.low), 2), 0) as  candle_up_ratio,
     if(t1.high - t1.low > 0, round(abs(t1.close - t1.open) / (t1.high - t1.low), 2), 0) as  candle_solid_ratio,
