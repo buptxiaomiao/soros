@@ -28,8 +28,8 @@ class L1Task(BaseTask):
             'dim_rela_ths_stock.sql',
             'fact_ths_daily.sql',
 
-            'topic_stock_daily',
-            'topic_ths_daily',
+            'topic_stock_daily.sql',
+            'topic_ths_daily.sql',
 
         ]
         for name in conf_list:
