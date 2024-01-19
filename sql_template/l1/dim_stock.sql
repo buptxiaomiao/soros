@@ -156,11 +156,12 @@ left join (
 left join (
     select
         ts_code,
-        concat_ws(',', collect_set(if(ths_type='I', ths_name, null))) as ths_industry,
-        concat_ws(',', collect_set(if(ths_type='N' and ths_type not in (
+        concat_ws(',', sort_array(collect_set(if(ths_type='I', ths_name, null)))) as ths_industry,
+        concat_ws(',', sort_array(collect_set(if(ths_type='N' and ths_name not in (
             '沪深300样本股', '上证50样本股', '中证500成份股', '融资融券', 'MSCI概念', '标普道琼斯A股', '三季报预增',
-            '上证380成份股', '注册制次新股', '新股与次新股', 'ST板块'
-            ), ths_name, null))) as ths_concept,
+            '上证380成份股', '注册制次新股', '新股与次新股', 'ST板块', '上证180成份股', '同花顺漂亮100', '沪股通', '深股通',
+            '科创次新股', ''
+            ), ths_name, null)))) as ths_concept,
         max(if(ths_name='沪深300样本股', 1, null)) as is_hs300,
         max(if(ths_name='上证50样本股', 1, null)) as is_a50,
         max(if(ths_name='中证500成份股', 1, null)) as is_zz500,
