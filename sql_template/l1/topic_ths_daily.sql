@@ -91,5 +91,5 @@ select
         -20,  lag(change_pct, 20) over(partition by ths_code order by trade_date asc)
         ) as change_pct_map,
 
-    if(rank() over(partition by ts_code order by trade_date desc) = 1, 1, null) as is_newest
+    if(rank() over(partition by ths_code order by trade_date desc) = 1, 1, null) as is_newest
 from l1.fact_ths_daily
