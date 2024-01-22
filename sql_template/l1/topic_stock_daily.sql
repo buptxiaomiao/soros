@@ -9,7 +9,6 @@ create table if not exists l1.topic_stock_daily (
 
     total_mv            double      comment '总市值（亿元）',
     circ_mv             double      comment '流通市值（亿元）',
-    close_qfq           double      comment '收盘价-qfq',
     pe_ttm              double       comment '市盈率（TTM，亏损的PE为空）',
 
     value_map           map<int, double>     comment '-20~10', -- 累计，直接加减
@@ -33,9 +32,9 @@ insert overwrite table l1.topic_stock_daily
 select
     ts_code,
     name,
-    market,
     is_hs,
     trade_date,
+
     total_mv,
     circ_mv,
     pe_ttm,
