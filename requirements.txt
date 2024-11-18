@@ -8,4 +8,6 @@ flask
 pycryptodome
 crypto # site-packages，手动将crypto改为Crypto
 openpyxl
+akshare
+
 
