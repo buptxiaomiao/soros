@@ -8,6 +8,8 @@ flask~=3.0.3
 pycryptodome
 crypto # site-packages，手动将crypto改为Crypto
 openpyxl
+akshare
+
 
 
 requests~=2.32.3
