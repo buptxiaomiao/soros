@@ -150,10 +150,10 @@ class Boll:
                 if low_lt_lb and not low_lt_lb_prev:
                     msg = f"{name} {ts_code}在{dt}最低价{low}接近BOLL下限{round(lb_now, 2)}. 当前价格{price}"
                     print(msg)
-                    if cls.cache_manager.get(name):
+                    if cls.cache_manager.get(f"{name}{ts_code}"):
                         continue
                     else:
-                        cls.cache_manager.update(name, msg)
+                        cls.cache_manager.update(f"{name}{ts_code}", msg)
                         send_notification(msg)
 
 if __name__ == '__main__':
