@@ -6,6 +6,7 @@ import requests
 import sys
 import os
 
+from rt.api.stock_list_rt import get_stock_list_rt
 
 sys.path.append('..')
 sys.path.append('../..')
@@ -133,6 +134,7 @@ class Boll:
     @classmethod
     def check_and_notice(cls, df):
         for ts_code, group in df.groupby('ts_code'):
+
             if group.shape[0] > 1:
                 group['low_lt_lb_prev'] = group['low_lt_lb'].shift(1)
                 row = group.iloc[-1]
@@ -160,7 +162,7 @@ if __name__ == '__main__':
 
     ts.set_token(TOKEN)
     print(TOKEN)
-    df = ts.realtime_list()
+    df = get_stock_list_rt()
     Boll.run(df)
     pass
     # send_notification("测试bark")
