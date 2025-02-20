@@ -1,9 +1,10 @@
 import time
 import os
 from datetime import datetime
-from api.etf_realtime import get_rt_etf_all_a_dc
 import tushare as ts
 
+from rt.api.etf_list_rt import get_etf_list_rt
+from rt.api.stock_list_rt import get_stock_list_rt
 from rt.api.stock_minutes_rt import get_stock_minutes_rt, get_sell_msg
 
 TOKEN = os.getenv("TOKEN")
@@ -15,7 +16,7 @@ ETF_LIST = ['513090', '513000']
 
 
 def func():
-    df = ts.realtime_list()
+    df = get_stock_list_rt()
     dt = datetime.now().strftime(FMT)
 
     code_set = list()
@@ -27,7 +28,7 @@ def func():
         s_msg = f" {name[:2]}{d['PCT_CHANGE']} "
         msg += s_msg
 
-    etf = get_rt_etf_all_a_dc()
+    etf = get_etf_list_rt()
     for code in ETF_LIST:
         d = etf[etf['TS_CODE'] == code].iloc[0].to_dict()
         s_msg = f" {d['NAME'].replace('ETF', '')}{d['PCT_CHANGE']} p={d['PRICE']} gap={d['RT_VALUE_GAP']} "
