@@ -1,12 +1,11 @@
 from concurrent.futures import as_completed
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from lark_oapi.api.corehr.v1 import Object
 from pandas.core.interchange.dataframe_protocol import DataFrame
 from typing import List
 
 
-class ThreadPoolExecutorBase(Object):
+class ThreadPoolExecutorBase:
 
     @classmethod
     def run_by_pool(cls, fetch_func, total_page) -> List[DataFrame]:
