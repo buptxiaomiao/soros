@@ -6,7 +6,6 @@ import requests
 import sys
 import os
 
-from rt.api.stock_list_rt import get_stock_list_rt
 
 sys.path.append('..')
 sys.path.append('../..')
@@ -14,6 +13,7 @@ sys.path.append('../..')
 from utils.setting import BARK_KEY
 from utils.cache_manager import CacheManager
 from rt.api.daily import Daily
+from rt.api.stock_list_rt import get_stock_list_rt
 from utils.now import Now
 
 pd.set_option('display.max_rows', None)  # 设置为 None 表示不限制行数
