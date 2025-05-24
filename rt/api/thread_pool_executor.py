@@ -23,3 +23,22 @@ class ThreadPoolExecutorBase:
                 except Exception as e:
                     print(f"Error fetching page: {e}")
         return results
+
+    @classmethod
+    def get_proxy_conf(cls):
+        import os
+        server = os.getenv("proxy_server")
+        key = os.getenv("proxy_key")
+        sec = os.getenv("proxy_secret")
+
+        if server and key and sec:
+            proxyUrl = "http://%(user)s:%(password)s@%(server)s" % {
+                "user": key,
+                "password": sec,
+                "server": server,
+            }
+            return {
+                'http': proxyUrl,
+                'https': proxyUrl
+            }
+        return {}

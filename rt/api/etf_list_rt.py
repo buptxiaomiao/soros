@@ -30,8 +30,11 @@ class ETFListRT(ThreadPoolExecutorBase):
     def get_total_page(cls):
         if hasattr(cls, 'total_page'):
             return getattr(cls, 'total_page')
-        _res = cls.get_rt_etf_all_a_dc()
-        return int(_res[1] / 200 + 1)
+        (df, total_cnt) = cls.get_rt_etf_all_a_dc()
+        page_size = df.shape[0]
+        total_page = int(total_cnt / page_size + 1)
+        setattr(cls, 'total_page', total_page)
+        return total_page
 
 
     @classmethod

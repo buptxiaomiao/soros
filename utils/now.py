@@ -31,6 +31,10 @@ class Now(object):
     def __str__(self):
         return str(self.now)[:19]
 
+    @property
+    def is_trade_date(self):
+        return self.date.now.weekday() <= 5
+
 
 if __name__ == '__main__':
     a = Now()

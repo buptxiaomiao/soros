@@ -21,6 +21,7 @@ pd.set_option('display.max_columns', None)  # 设置为 None 表示不限制列�
 
 # 发送通知的函数
 def send_notification(msg):
+    return True
     # 这里需要替换为你的Bark应用的device_key
     device_key = BARK_KEY
     print(BARK_KEY)
@@ -84,19 +85,41 @@ class Boll:
     def run(cls, new_df):
         now = Now()
         end_date = now.delta(1).date
-        new_df['dt'] = str(now)
-        new_df['ts_code'] = new_df['TS_CODE']
-        new_df['price'] = new_df['PRICE']
-        new_df['high'] = new_df['HIGH']
-        new_df['low'] = new_df['LOW']
-        new_df['name'] = new_df['NAME']
-        new_df = new_df[ ['ts_code', 'dt', 'price', 'high', 'low', 'name'] ]
+        new_df['dt'] = str(now).replace('-', '')
+        new_df_to_merge = new_df[ ['ts_code', 'dt', 'price', 'high', 'low', 'name'] ]
         filename = f'/tmp/boll_day_his_{end_date}.csv'
         his_df = cls.ensure_dataframe(filename)
+        df = his_df
+        if cls.check_add_new_df(his_df, new_df_to_merge):
+            print(f"now:{now.now}, Boll his_df['dt'].max()={his_df['dt'].max()} add new df.")
+            df = pd.concat([his_df, new_df_to_merge])
+        else:
+            print(f"now:{now.now}, Boll his_df['dt'].max()={his_df['dt'].max()} NOT add new df.")
 
-        df = pd.concat([his_df, new_df])
         df = cls.cal_boll(df)
-        cls.check_and_notice(df)
+        notice_data_list = cls.get_notice_list(df)
+        notice_df = cls.fill_stock_info(notice_data_list, new_df)
+        # print(notice_df)
+        # print(notice_df.shape)
+        # print(notice_df.columns)
+        # print(notice_df['dt'].max())
+
+        from rt.mail_tool import MailTool
+        time_str = str(notice_df['dt'].max())[:14] # 20250523 12:34
+        MailTool.send(f"日线BOLL{time_str}", [(notice_df, '接近BOLL下限')])
+
+    @classmethod
+    def check_add_new_df(cls, his_df, new_df):
+        his_df_dt = his_df['dt'].max()
+        now = Now()
+        if his_df_dt == str(now.datekey):
+            return False
+        if not now.is_trade_date:
+            return False
+        if now.now.hour < 9 or now.now.hour >= 18:
+            return False
+        return True
+
 
     @classmethod
     def cal_boll(cls, df, window=20, num_std=2):
@@ -132,9 +155,9 @@ class Boll:
         return df
 
     @classmethod
-    def check_and_notice(cls, df):
+    def get_notice_list(cls, df):
+        res = list()
         for ts_code, group in df.groupby('ts_code'):
-
             if group.shape[0] > 1:
                 group['low_lt_lb_prev'] = group['low_lt_lb'].shift(1)
                 row = group.iloc[-1]
@@ -143,18 +166,39 @@ class Boll:
                 price = row['price']
                 low = row['low']
                 lb = row['lb']
-                lb_now = row['lb-now']
+                lb_now = row['lb-now'] # 当前价格的BOLL
                 price_lt_lb = row['price_lt_lb']
                 low_lt_lb = row['low_lt_lb']
                 low_lt_lb_prev = row['low_lt_lb_prev']
                 if low_lt_lb and not low_lt_lb_prev:
                     msg = f"{name} {ts_code}在{dt}最低价{low}接近BOLL下限{round(lb_now, 2)}. 当前价格{price}"
-                    print(msg)
-                    if cls.cache_manager.get(f"{name}{ts_code}"):
-                        continue
-                    else:
-                        cls.cache_manager.update(f"{name}{ts_code}", msg)
-                        send_notification(msg)
+                    data = {
+                        'ts_code': ts_code,
+                        'dt': dt,
+                        'lb_now': round(lb_now, 2),
+                        'price': price,
+                    }
+                    res.append(data)
+                    # print(msg)
+                    # if cls.cache_manager.get(f"{name}{ts_code}"):
+                    #     continue
+                    # else:
+                    #     cls.cache_manager.update(f"{name}{ts_code}", msg)
+                    #     send_notification(msg)
+        return res
+
+    @classmethod
+    def fill_stock_info(cls, data_list, new_df):
+        boll_df = pd.DataFrame(data_list)
+        merged_df = pd.merge(
+            boll_df[ ['ts_code', 'dt', 'lb_now', 'price'] ],
+            new_df[ ['ts_code', 'name', 'change_pct', 'total_mv', 'float_mv', 'amount'] ],
+            on=['ts_code'],  # 合并键
+            how='left'  # 按需调整合并方式，如 'left', 'right', 'outer'
+        )
+        return merged_df[
+            ['dt', 'ts_code', 'name', 'price', 'change_pct', 'lb_now', 'total_mv', 'float_mv', 'amount']
+        ]
 
 if __name__ == '__main__':
     import tushare as ts
@@ -164,7 +208,12 @@ if __name__ == '__main__':
     print(TOKEN)
     df = get_stock_list_rt()
     Boll.run(df)
-    pass
-    # send_notification("测试bark")
+
+    # now = Now()
+    # print(now)
+    # print(str(now))
+    # print('2025-05-25 02:17:36' > '20250501')
+    # print('2025-05-25 02:17:36' > '20251201')
+
 
 

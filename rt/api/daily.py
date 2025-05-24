@@ -56,3 +56,8 @@ class Daily:
             "amount"
         ])
         return df
+
+if __name__ == '__main__':
+    df = Daily.get_df('2025-05-01', '2025-05-23')
+    print(df.shape)
+    df.to_csv('ddd.csv')

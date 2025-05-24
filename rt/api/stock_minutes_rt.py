@@ -18,6 +18,7 @@ def get_stock_minutes_rt(code, klt=30, window=20, num_std=2, end=""):
     end_date_str = (datetime.now() + + timedelta(days=random.randint(1, 30))).strftime('%Y%m%d')
     if end:
         end_date_str = end
+    print(end_date_str)
 
     url = (base_url +
            f"?secid={mkt}.{code}"
@@ -93,8 +94,9 @@ def get_sell_msg(df):
 if __name__ == '__main__':
     pd.set_option('display.max_columns', None)  # 显示所有列
     # res = get_stock_minutes_rt("872190") # 北证0
-    # df = get_stock_minutes_rt("002409", klt=30, end='20241231')
-    df = get_stock_minutes_rt("563180", klt=30)
+    # df = get_stock_minutes_rt("002409", klt=1)
+    df = get_stock_minutes_rt("002409", klt=120, end='20250524')
+    # df = get_stock_minutes_rt("563180", klt=1)
     print(df.shape)
     print(df)
     print(get_sell_msg(df))
