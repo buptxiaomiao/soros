@@ -31,7 +31,8 @@ class MailTool:
             res_login = server.login(cls.user, cls.password)  # 需使用邮箱提供的授权码，非登录密码[7](@ref)
             print(f"stmp.login={res_login}")
             res_send = server.sendmail(msg["From"], msg["To"], msg.as_string())
-            print(f"stmp.send to {msg['To']} finish. {res_send}")
+            print(f"stmp.send msg={msg.as_string()}")
+            print(f"stmp.send to {msg['To']} finish. res_send={res_send}")
 
 def dataframe_tuple_list_to_styled_html(tuple_list):
     """
