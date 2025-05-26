@@ -1,6 +1,7 @@
 # coding: utf-8
 import datetime
 
+import numpy as np
 import pandas as pd
 import requests
 import sys
@@ -14,6 +15,7 @@ from utils.setting import BARK_KEY
 from utils.cache_manager import CacheManager
 from rt.api.daily import Daily
 from rt.api.stock_list_rt import get_stock_list_rt
+from rt.api.industry_bk_member_rt import get_bk_member_df
 from utils.now import Now
 
 pd.set_option('display.max_rows', None)  # 设置为 None 表示不限制行数
@@ -185,6 +187,7 @@ class Boll:
                         'ts_code': ts_code,
                         'dt': dt,
                         'lb_now': round(lb_now, 2),
+                        'low': low,
                         'price': price,
                         'amount_avg10_prev': row['amount_avg10_prev']
                     }
@@ -202,7 +205,7 @@ class Boll:
         boll_df = pd.DataFrame(data_list)
         print(f"fill_stock_info.boll_df.shape={boll_df.shape} new_df.shape={new_df.shape}")
         merged_df = pd.merge(
-            boll_df[ ['ts_code', 'dt', 'lb_now', 'price', 'amount_avg10_prev'] ],
+            boll_df[ ['ts_code', 'dt', 'low', 'lb_now', 'price', 'amount_avg10_prev'] ],
             new_df[ ['ts_code', 'name', 'change_pct', 'total_mv', 'float_mv', 'amount'] ],
             on=['ts_code'],  # 合并键
             how='left'  # 按需调整合并方式，如 'left', 'right', 'outer'
@@ -213,18 +216,42 @@ class Boll:
         merged_df = merged_df[
             (merged_df['price'] > 5)
             & (~merged_df["name"].str.contains("ST", na=False))
+            & (~merged_df["name"].str.contains("退", na=False))
             & ((merged_df['amount_avg10_prev'] > 0.8) | (merged_df['amount'] > 1))
         ]
 
         print(f"fill_stock_info.merged_df.filter.shape={merged_df.shape}")
 
+        merged_df['破线'] = np.where(merged_df['low'] <= merged_df['lb_now'], '●', '')
         merged_df = merged_df[
-            ['dt', 'ts_code', 'name', 'change_pct', 'price', 'lb_now', 'amount', 'total_mv', 'float_mv']
+            ['dt', 'ts_code', 'name', 'change_pct', 'price', 'lb_now', 'amount', 'float_mv', '破线']
         ]
         merged_df.columns = [
-            '日期', '代码', '名称', '涨跌', '价格', 'BOLL下限', '成交额(亿)', '总市值(亿)', '流动市值(亿)'
+            '日期', '代码', '名称', '涨跌', '价格', 'BOLL下限', '成交额(亿)', '流动市值(亿)', '破线'
         ]
-        return merged_df
+
+        bk_df = get_bk_member_df()
+        bk_df['代码'] = bk_df['股票代码']
+        bk_df['行业板块'] = bk_df['bk_name']
+        bk_df['主力净流入(万)'] = bk_df['主力净流入'].round(1)
+        bk_df = bk_df[
+            ['代码', '行业板块', '股票名称', '主力净流入(万)']
+        ]
+
+        final_df = pd.merge(
+            merged_df[ ['日期', '代码', '名称', '涨跌', '价格', 'BOLL下限', '破线', '成交额(亿)', '流动市值(亿)'] ],
+            bk_df[ ['代码', '行业板块', '主力净流入(万)'] ],
+            on=['代码'],  # 合并键
+            how='left'  # 按需调整合并方式，如 'left', 'right', 'outer'
+        )
+        print(f"fill_stock_info.行业板块final_df.shape={final_df.shape}")
+
+        final_df = final_df.sort_values(by=['行业板块', '主力净流入(万)'], ascending=False)
+        final_df = final_df[
+            ['日期', '代码', '名称', '涨跌', '行业板块', '价格', 'BOLL下限', '破线', '主力净流入(万)', '成交额(亿)', '流动市值(亿)']
+        ]
+        print(final_df)
+        return final_df
 
 if __name__ == '__main__':
     import tushare as ts
