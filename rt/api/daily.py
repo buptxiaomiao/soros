@@ -58,6 +58,7 @@ class Daily:
         return df
 
 if __name__ == '__main__':
-    df = Daily.get_df('2025-05-01', '2025-05-23')
+    # df = Daily.get_df('2025-05-01', '2025-05-23')
+    df = Daily.get_df('2025-05-26', '2025-05-26')
     print(df.shape)
-    df.to_csv('ddd.csv')
+    # df.to_csv('ddd.csv')

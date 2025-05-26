@@ -1,4 +1,4 @@
-tushare==1.3.7
+tushare==1.4.21
 numpy
 pandas~=2.0.3
 mako
@@ -9,8 +9,6 @@ pycryptodome
 crypto # site-packages，手动将crypto改为Crypto
 openpyxl
 akshare
-
-
-
 requests~=2.32.3
 python-dateutil~=2.9.0.post0
+retrying==1.3.4

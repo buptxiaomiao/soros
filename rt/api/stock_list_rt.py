@@ -3,11 +3,11 @@
 
 import time
 import uuid
-from random import randint
-
 import pandas as pd
 import requests
+from random import randint
 from tushare.util.format_stock_code import format_stock_code
+from retrying import retry
 
 from rt.api.thread_pool_executor import ThreadPoolExecutorBase
 
@@ -87,6 +87,7 @@ class StockListRT(ThreadPoolExecutorBase):
     )
 
     @classmethod
+    @retry(stop_max_attempt_number=3, wait_fixed=200)
     def realtime_list(cls, page_no = None) -> (pd.DataFrame, int):
         """
         东方财富网-沪深京 A 股-实时行情
@@ -115,7 +116,9 @@ class StockListRT(ThreadPoolExecutorBase):
         }
         r = requests.get(url, params=params, proxies=cls.get_proxy_conf())
         data_json = r.json()
-        if not data_json["data"]["diff"]:
+        if ((data_json is None)
+                or (not data_json["data"])
+                or (not data_json["data"]["diff"])):
             return pd.DataFrame(), 0
         total_num = data_json['data']['total']
 
@@ -145,9 +148,11 @@ if __name__ == '__main__':
     print(res)
     print(res.shape)
     print(res.columns)
+    print(res['ts_code'].nunique())
 
-    res = get_stock_list_rt()
+    res = get_stock_list_rt_cn()
     print(res)
     print(res.shape)
     print(res.columns)
+    print(res['代码'].nunique())
 

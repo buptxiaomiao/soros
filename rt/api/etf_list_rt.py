@@ -5,6 +5,7 @@ from random import randint
 
 import pandas as pd
 import requests
+from retrying import retry
 
 from rt.api.thread_pool_executor import ThreadPoolExecutorBase
 
@@ -38,6 +39,7 @@ class ETFListRT(ThreadPoolExecutorBase):
 
 
     @classmethod
+    @retry(stop_max_attempt_number=3, wait_fixed=200)
     def get_rt_etf_all_a_dc(cls, page_no = None) -> (pd.DataFrame, int):
         """
         东方财富网- ETF-实时行情
@@ -94,8 +96,9 @@ class ETFListRT(ThreadPoolExecutorBase):
         }
         r = requests.get(url, params=params)
         data_json = r.json()
-        # print(data_json)
-        if not data_json["data"]["diff"]:
+        if ((data_json is None)
+                or (not data_json["data"])
+                or (not data_json["data"]["diff"])):
             return pd.DataFrame(), 0
 
         total_num = data_json['data']['total']

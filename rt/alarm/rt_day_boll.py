@@ -44,7 +44,7 @@ class Boll:
         end_date = str(now.delta(1).date)
         start_date = str(now.delta(40).date)
         df = Daily.get_df(start_date, end_date)
-        df['dt'] = df['trade_date']
+        df['dt'] = df['trade_date'].astype(str)
         df['price'] = df['close']
         df['name'] = ''
         df['amount'] = df['amount'] / 100000
@@ -79,6 +79,7 @@ class Boll:
             print(f"CSV file found, loading data...:{filename}")
             # 如果文件存在，从CSV加载数据
             dataframe = cls.load_dataframe_from_csv(filename)
+            dataframe['dt'] = dataframe['dt'].astype(str)
 
         return dataframe
 
@@ -106,7 +107,7 @@ class Boll:
         # print(notice_df['dt'].max())
 
         from rt.mail_tool import MailTool
-        time_str = str(notice_df['日期'].max())[:14] # 20250523 12:34
+        time_str = str(notice_df['日期'].max())[4:14] # 20250523 12:34
         MailTool.send(f"日线BOLL{time_str}", [(notice_df, '接近BOLL下限')])
 
     @classmethod
