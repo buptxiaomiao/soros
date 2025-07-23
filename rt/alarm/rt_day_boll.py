@@ -248,7 +248,7 @@ class Boll:
 
         final_df = final_df.sort_values(by=['行业板块', '主力净流入(万)'], ascending=False)
         final_df = final_df[
-            ['日期', '代码', '名称', '涨跌', '行业板块', '价格', 'BOLL下限', '破线', '主力净流入(万)', '成交额(亿)', '流动市值(亿)']
+            ['代码', '名称', '涨跌', '行业板块', '价格', 'BOLL下限', '破线', '流动市值(亿)', '主力净流入(万)', '成交额(亿)']
         ]
         print(final_df)
         return final_df
