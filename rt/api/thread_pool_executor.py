@@ -38,6 +38,7 @@ class ThreadPoolExecutorBase:
                     results.append(res_tuple[0])
                 except Exception as e:
                     print(f"Error fetching page: {e}")
+                    raise e
         return results
 
     @classmethod

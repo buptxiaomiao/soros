@@ -78,6 +78,7 @@ class ETFListRT(ThreadPoolExecutorBase):
         url = f"http://{randint(1, 100)}.push2.eastmoney.com/api/qt/clist/get"
         a = "https://1.push2.eastmoney.com/api/qt/clist/get?" \
             "pn=1&pz=20&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2" \
+             "& cb=cb=xxx" \
             "&wbp2u=7433395868590096|0|1|0|web&fid=f3&fs=b:MK0021,b:MK0022,b:MK0023,b:MK0024" \
             "&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f22,f11,f62,f128,f136,f115,f152&_=1706634482365"
         params = {

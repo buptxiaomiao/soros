@@ -15,7 +15,7 @@ from rt.api.thread_pool_executor import ThreadPoolExecutorBase
 def get_stock_list_rt():
     df = get_stock_list_rt_cn()
     df.columns = [
-        'ts_code', 'name', 'price', 'change_pct', 'amount', 'high', 'low', 'vol_ratio', 'pre_close', 'total_mv', 'float_mv',
+        'TS_CODE', 'NAME', 'price', 'PCT_CHANGE', 'amount', 'high', 'low', 'vol_ratio', 'pre_close', 'total_mv', 'float_mv',
         'pe_ttm', 'turnover_rate', 'change', 'volume', 'swing', 'open', 'pb', 'change_pct_60', 'change_pct_this_year'
     ]
     return df
@@ -97,7 +97,7 @@ class StockListRT(ThreadPoolExecutorBase):
         """
         ut = str(uuid.uuid4()).replace('-', '')
 
-        url = f"http://{randint(1, 100)}.push2.eastmoney.com/api/qt/clist/get"
+        url = f"http://{randint(1, 100)}.push2.eastmoney.com/api/qt/clist/get&cb=cb=jQuery371016031028903839561_1756575499202"
         fields_str = ",".join([i[0] for i in cls.field_config])
         params = {
             "pn":  "1" if not page_no else str(page_no), # 页码
@@ -150,9 +150,12 @@ if __name__ == '__main__':
     print(res.columns)
     print(res['ts_code'].nunique())
 
-    res = get_stock_list_rt_cn()
-    print(res)
-    print(res.shape)
-    print(res.columns)
-    print(res['代码'].nunique())
+    # res = get_stock_list_rt_cn()
+    # print(res)
+    # print(res.shape)
+    # print(res.columns)
+    # print(res['代码'].nunique())
+    #
 
+    # res = StockListRT.realtime_list()
+    # print(res)

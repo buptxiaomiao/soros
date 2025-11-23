@@ -3,39 +3,47 @@ import os
 from datetime import datetime
 import tushare as ts
 import easyquotation
+import pandas as pd
 
-from rt.api.etf_list_rt import get_etf_list_rt
-from rt.api.stock_list_rt import get_stock_list_rt
 from rt.api.stock_minutes_rt import get_stock_minutes_rt, get_sell_msg
 
 TOKEN = os.getenv("TOKEN")
-FMT = "%m-%d %H:%M:%S"
-SLEEP_SECONDS = 10
+# FMT = "%m-%d %H:%M:%S"
+FMT = "%H:%M:%S"
+SLEEP_SECONDS = 20
 ts.set_token(TOKEN)
 STOCK_LIST = ['乐鑫科技', '伯特利', '雅克科技']
-ETF_LIST = ['513090', '513000']
+ETF_LIST = ['513090']
 
 
 def func():
-    df = get_stock_list_rt()
+    # df = get_stock_list_rt()
     quotation = easyquotation.use('tencent') # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
-    df = quotation.market_snapshot(prefix=False)
-    print(df)
+    res = quotation.market_snapshot(prefix=False)
+    # 将字典值转换为列表，然后创建DataFrame
+    data_list = [value for value in res.values()]
+    df = pd.DataFrame(data_list)
+    # print(df)
     dt = datetime.now().strftime(FMT)
 
     code_set = list()
-
-    msg = f"【{dt}】 中位={df.PCT_CHANGE.median()}"
+    msg = f"[{dt}]中位={round(df['涨跌(%)'].median(), 2)} "
     for name in STOCK_LIST:
-        d = df[df['NAME'] == name].iloc[0].to_dict()
-        code_set.append(d['TS_CODE'].split('.')[0])
-        s_msg = f" {name[:2]}{d['PCT_CHANGE']} "
+        d = df[df['name'] == name].iloc[0].to_dict()
+        code_set.append(d['code'])
+        s_msg = f"{name[:2]}{d['涨跌(%)']} "
         msg += s_msg
 
-    etf = get_etf_list_rt()
+
+    quotation = easyquotation.use('jsl') # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
+    res = quotation.etfindex(index_id="", min_volume=0, max_discount=None, min_discount=None)
+    # 将字典值转换为列表，然后创建DataFrame
+    data_list = [value for value in res.values()]
+    etf = pd.DataFrame(data_list)
+
     for code in ETF_LIST:
-        d = etf[etf['TS_CODE'] == code].iloc[0].to_dict()
-        s_msg = f" {d['NAME'].replace('ETF', '')}{d['PCT_CHANGE']} p={d['PRICE']} gap={d['RT_VALUE_GAP']} "
+        d = etf[etf['fund_id'] == code].iloc[0].to_dict()
+        s_msg = f"{d['fund_nm'].replace('ETF', '')}{d['increase_rt']} p={d['price']} "
         msg += s_msg
     print(msg)
     return code_set + ETF_LIST
