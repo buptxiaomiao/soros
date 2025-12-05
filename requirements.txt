@@ -6,10 +6,10 @@ fire
 lark-oapi
 flask~=3.0.3
 pycryptodome
-crypto # site-packages，手动将crypto改为Crypto
 openpyxl
 akshare
 requests~=2.32.3
 python-dateutil~=2.9.0.post0
 retrying==1.3.4
 easyquotation
+python-dotenv

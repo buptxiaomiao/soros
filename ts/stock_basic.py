@@ -42,4 +42,5 @@ class StockBasic(BaseTask):
 
 
 if __name__ == '__main__':
-    StockBasic.run()
+    df = StockBasic.get_df()
+    print(df)
