@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 class ETFPcfParser:
     """
-    ETF PCF文件下载和解析器（修复证券名称乱码问题）
+    https://www.szse.cn/disclosure/fund/currency/index.html
+    深证-ETF PCF文件下载和解析器（修复证券名称乱码问题）
     """
 
     def __init__(self):
@@ -348,6 +349,8 @@ def print_pcf_summary(data):
     # 打印成分股信息
     components = pcf_data["components"]
     print(f"\n=== 成分股信息 (共{len(components)}只) ===")
+    for i in components:
+        print(i)
 
     # 创建DataFrame以便更好地显示
     df_components = pd.DataFrame(components)
