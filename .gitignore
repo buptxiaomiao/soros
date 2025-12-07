@@ -9,3 +9,4 @@ trash
 .env
 *.ipynb
 *.xlsx
+*.xml

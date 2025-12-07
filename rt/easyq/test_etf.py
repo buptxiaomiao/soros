@@ -13,6 +13,8 @@ print('finish.')
 # 将字典值转换为列表，然后创建DataFrame
 data_list = [value for value in res.values()]
 etf = pd.DataFrame(data_list)
+etf.to_csv("etf_20251207.csv")
+
 # print(etf)
 # for code in ETF_LIST:
 d = etf[etf['fund_id'] == '510300'].iloc[0].to_dict()
