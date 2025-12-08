@@ -10,3 +10,4 @@ trash
 *.ipynb
 *.xlsx
 *.xml
+*.db
