@@ -86,7 +86,7 @@ class ShangETFPcfDownloader:
                 date_str = extracted_date or date_str or datetime.now().strftime("%Y%m%d")
 
                 # 确定文件名和保存路径
-                filename = f"pcf_{etf_code}_{date_str}.xml"
+                filename = f"shang_pcf/pcf_{etf_code}_{date_str}.xml"
 
                 if save_dir:
                     os.makedirs(save_dir, exist_ok=True)

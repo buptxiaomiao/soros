@@ -13,8 +13,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-class ETFPcfParser:
+class ShenETFPcfParser:
     """
+    https://reportdocs.static.szse.cn/files/text/etf/ETF15991920251208.txt?random=0.08979976806617573
     https://www.szse.cn/disclosure/fund/currency/index.html
     深证-ETF PCF文件下载和解析器（修复证券名称乱码问题）
     """
@@ -97,7 +98,7 @@ class ETFPcfParser:
         logger.info(f"正在下载PCF文件: {url}")
 
         if save_path is None:
-            save_path = f"pcf_{etf_code}_{date_str}.xml"
+            save_path = f"shen_pcf/pcf_{etf_code}_{date_str}.xml"
 
         try:
             response = self.session.get(url, timeout=30)
@@ -380,7 +381,7 @@ def print_pcf_summary(data):
 
 def test_encoding_fix():
     """测试编码修复功能"""
-    parser = ETFPcfParser()
+    parser = ShenETFPcfParser()
 
     # 测试您提供的乱码示例
     test_cases = [
@@ -402,7 +403,7 @@ def main():
     # 先测试编码修复
     test_encoding_fix()
 
-    parser = ETFPcfParser()
+    parser = ShenETFPcfParser()
 
     # 示例: 下载并解析用户提供的ETF示例
     etf_code = "159562"  # 根据文档中的SecurityID
@@ -434,10 +435,10 @@ def main():
 # 单独使用解析功能的示例
 def parse_existing_pcf_file():
     """解析已存在的PCF文件示例"""
-    parser = ETFPcfParser()
+    parser = ShenETFPcfParser()
 
     # 假设已经有一个PCF文件
-    file_path = "pcf_159562_20251205.xml"  # 替换为实际文件路径
+    file_path = "shen_pcf/pcf_159919_20251205.xml"  # 替换为实际文件路径
 
     if os.path.exists(file_path):
         print(f"正在解析PCF文件: {file_path}")

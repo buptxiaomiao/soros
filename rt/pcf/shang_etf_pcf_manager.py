@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 class ShangETFPcfManager:
     """
+    https://www.sse.com.cn/disclosure/fund/etflist/detail.shtml?type=009&fundid=510300
     上交所ETF PCF文件管理器
     整合下载和解析功能，提供统一接口
     """
@@ -46,24 +47,23 @@ class ShangETFPcfManager:
 
         self.parser = ShangETFPcfParser(xml_file_path=download_result['file_path'])
         # 解析PCF文件
-        parse_result = self.parser.components
-        return parse_result
 
-        # # 合并结果
-        # result = {
-        #     "success": parse_result["success"],
-        #     "etf_code": etf_code,
-        #     "date": download_result.get("date", ""),
-        #     "download_url": download_result.get("url", ""),
-        #     "file_path": download_result["file_path"]
-        # }
-        #
-        # if parse_result["success"]:
-        #     result["data"] = parse_result["data"]
-        # else:
-        #     result["error"] = parse_result.get("error", "解析失败")
-        #
-        # return result
+        result = {
+            'etf_code': etf_code,
+            'date': download_result['date'],
+            'download_url': download_result['url'],
+            'file_path': download_result['file_path'],
+            'data': self.parser.components,
+            'basic_info': self.parser.basic_info
+        }
+
+        if self.parser.components and self.parser.basic_info:
+            result['success'] = True
+        else:
+            result['success'] = False
+            result['error'] = '解析失败了...'
+
+        return result
 
     def parse_local_pcf_file(self, file_path):
         """
@@ -126,12 +126,14 @@ def print_shang_pcf_summary(data):
 
 if __name__ == '__main__':
     manager = ShangETFPcfManager()
-    data = manager.get_etf_pcf_data('510300')
+    result = manager.get_etf_pcf_data('510300')
 
     # data = ShangETFPcfManager().parse_local_pcf_file('./shang_pcf_data/pcf_510300_20251205.xml')
     # print_shang_pcf_summary(data)
-
-    for i in data:
+    print(result)
+    for i in result['data']:
         print(i)
+
+
 
 
