@@ -31,20 +31,21 @@ class ShangETFPcfParser:
         """解析基本信息"""
         self.basic_info = {
             'fund_instrument_id': self.root.findtext('FundInstrumentID'),
-            'creation_redemption_unit': int(self.root.findtext('CreationRedemptionUnit')),
+            'creation_redemption_unit': int(self.root.findtext('CreationRedemptionUnit') or 0),
             'trading_day': self.root.findtext('TradingDay'),
             'pre_trading_day': self.root.findtext('PreTradingDay'),
-            'nav_per_cu': float(self.root.findtext('NAVperCU')),
-            'nav': float(self.root.findtext('NAV')),
-            'pre_cash_component': float(self.root.findtext('PreCashComponent')),
-            'estimated_cash_component': float(self.root.findtext('EstimatedCashComponent')),
-            'max_cash_ratio': float(self.root.findtext('MaxCashRatio')),
-            'redemption_limit': int(self.root.findtext('RedemptionLimit')),
-            'publish_iopv_flag': int(self.root.findtext('PublishIOPVFlag')),
-            'creation_redemption_switch': int(self.root.findtext('CreationRedemptionSwitch')),
-            'creation_redemption_mechanism': int(self.root.findtext('CreationRedemptionMechanism')),
-            'record_number': int(self.root.findtext('RecordNumber'))
+            'nav_per_cu': float(self.root.findtext('NAVperCU') or 0),
+            'nav': float(self.root.findtext('NAV') or 0),
+            'pre_cash_component': float(self.root.findtext('PreCashComponent') or 0),
+            'estimated_cash_component': float(self.root.findtext('EstimatedCashComponent') or 0),
+            'max_cash_ratio': float(self.root.findtext('MaxCashRatio') or 0),
+            'redemption_limit': int(self.root.findtext('RedemptionLimit') or 0),
+            'publish_iopv_flag': int(self.root.findtext('PublishIOPVFlag') or 0),
+            'creation_redemption_switch': int(self.root.findtext('CreationRedemptionSwitch') or 0),
+            'creation_redemption_mechanism': int(self.root.findtext('CreationRedemptionMechanism') or 0),
+            'record_number': int(self.root.findtext('RecordNumber') or 0)
         }
+        print(f"self.basic_info={self.basic_info}")
 
     def _parse_components(self):
         """解析成分股列表"""
@@ -64,6 +65,8 @@ class ShangETFPcfParser:
                     'underlying_security_id': component.findtext('UnderlyingSecurityID')
                 }
                 self.components.append(component_data)
+        else:
+            print(f"components is empty. {component_list}")
 
     def _safe_int(self, value: Optional[str]) -> Optional[int]:
         """安全转换为整数"""

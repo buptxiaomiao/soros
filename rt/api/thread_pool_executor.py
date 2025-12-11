@@ -4,8 +4,21 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from pandas.core.interchange.dataframe_protocol import DataFrame
 from typing import List
 
+import os
+import dotenv
+import sys
+
+sys.path.append('..')
+sys.path.append('./..')
+dotenv.load_dotenv()
+server = os.getenv("proxy_server")
+key = os.getenv("proxy_key")
+sec = os.getenv("proxy_secret")
+
 
 class ThreadPoolExecutorBase:
+
+    proxy_conf = {}
 
     @classmethod
     def run_by_pool(cls, fetch_func, total_page) -> List[DataFrame]:
@@ -43,19 +56,18 @@ class ThreadPoolExecutorBase:
 
     @classmethod
     def get_proxy_conf(cls):
-        import os
-        server = os.getenv("proxy_server")
-        key = os.getenv("proxy_key")
-        sec = os.getenv("proxy_secret")
+
+        if cls.proxy_conf:
+            return cls.proxy_conf
 
         if server and key and sec:
-            proxyUrl = "http://%(user)s:%(password)s@%(server)s" % {
+            proxy_url = "http://%(user)s:%(password)s@%(server)s" % {
                 "user": key,
                 "password": sec,
                 "server": server,
             }
-            return {
-                'http': proxyUrl,
-                'https': proxyUrl
+            cls.proxy_conf = {
+                'http': proxy_url,
+                'https': proxy_url
             }
-        return {}
+        return cls.proxy_conf

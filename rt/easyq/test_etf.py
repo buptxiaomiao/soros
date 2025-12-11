@@ -6,6 +6,7 @@ quotation = easyquotation.use('jsl') # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
 res = quotation.etfindex(index_id="", min_volume=0, max_discount=None, min_discount=None)
 
 print(res)
+print(res.keys())
 print('finish.')
 
 # quotation = easyquotation.use('jsl')  # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
@@ -13,7 +14,7 @@ print('finish.')
 # 将字典值转换为列表，然后创建DataFrame
 data_list = [value for value in res.values()]
 etf = pd.DataFrame(data_list)
-etf.to_csv("etf_20251207.csv")
+etf.to_csv("etf_20251210.csv")
 
 # print(etf)
 # for code in ETF_LIST:

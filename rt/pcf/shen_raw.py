@@ -406,8 +406,8 @@ def main():
     parser = ShenETFPcfParser()
 
     # 示例: 下载并解析用户提供的ETF示例
-    etf_code = "159562"  # 根据文档中的SecurityID
-    date_str = "20251205"
+    etf_code = "159919"  # 根据文档中的SecurityID
+    date_str = "20251201"
 
     print(f"\n正在获取ETF代码{etf_code}在日期{date_str}的PCF数据...")
 
@@ -455,7 +455,7 @@ def parse_existing_pcf_file():
 
 if __name__ == "__main__":
     # 直接运行时的示例
-    # main()
+    main()
 
     # 如果要解析已存在的文件，取消下面的注释
-    parse_existing_pcf_file()
+    # parse_existing_pcf_file()

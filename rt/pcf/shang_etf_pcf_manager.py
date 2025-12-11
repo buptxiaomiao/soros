@@ -47,6 +47,7 @@ class ShangETFPcfManager:
 
         self.parser = ShangETFPcfParser(xml_file_path=download_result['file_path'])
         # 解析PCF文件
+        print("parse download_result")
 
         result = {
             'etf_code': etf_code,
@@ -62,6 +63,8 @@ class ShangETFPcfManager:
         else:
             result['success'] = False
             result['error'] = '解析失败了...'
+            print(f"basic_info={self.parser.basic_info}")
+            print(f"components={self.parser.components}")
 
         return result
 
@@ -125,15 +128,17 @@ def print_shang_pcf_summary(data):
 
 
 if __name__ == '__main__':
-    manager = ShangETFPcfManager()
-    result = manager.get_etf_pcf_data('510300')
+    # manager = ShangETFPcfManager()
+    # result = manager.get_etf_pcf_data('510300')
+    # print(result)
+    # for i in result['data']:
+    #     print(i)
 
-    # data = ShangETFPcfManager().parse_local_pcf_file('./shang_pcf_data/pcf_510300_20251205.xml')
-    # print_shang_pcf_summary(data)
-    print(result)
-    for i in result['data']:
+    # data = ShangETFPcfManager().parse_local_pcf_file('./shang_pcf_data/pcf_5100040_20251211.xml')
+    data = ShangETFPcfManager().parse_local_pcf_file('./shang_pcf/pcf_510040_20251211.xml')
+    print_shang_pcf_summary(data)
+    for i in data:
         print(i)
-
 
 
 

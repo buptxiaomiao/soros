@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import sys
 import time
 import dotenv
 import lark_oapi as lark
@@ -17,7 +18,7 @@ from lark_oapi.api.bitable.v1 import (
 from lark_oapi.api.drive.v1 import (
     ListFileRequest, File
 )
-
+sys.path.append('..')
 dotenv.load_dotenv()
 
 APP_ID = os.getenv("FS_APP_ID", "")

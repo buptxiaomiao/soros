@@ -7,6 +7,9 @@ import re
 import logging
 from urllib.parse import quote, unquote
 import chardet
+import sys
+sys.path.append('..')
+from rt.api.thread_pool_executor import ThreadPoolExecutorBase
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -57,7 +60,11 @@ class ShangETFPcfDownloader:
             else:
                 logger.info(f"正在下载ETF代码{etf_code}的最新PCF文件...")
 
-            response = self.session.get(self.base_url, params=params, timeout=30)
+            logger.info(f'开始get请求:{self.base_url}, params={params}, '
+                        f'use proxies={True if ThreadPoolExecutorBase.get_proxy_conf() else False}')
+            response = self.session.get(self.base_url, params=params, timeout=30,
+                                        proxies=ThreadPoolExecutorBase.get_proxy_conf())
+            logger.info(f'请求res: status_code={response.status_code}, len(content)={len(response.content)}')
 
             if response.status_code == 200:
                 # 尝试多种编码方式处理响应内容

@@ -1,10 +1,13 @@
 import sqlite3
 import logging
+import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import json
 
 # 导入您现有的类
+import pandas as pd
+
 from shang_etf_pcf_manager import ShangETFPcfManager
 from shen_raw import ShenETFPcfParser
 
@@ -59,11 +62,12 @@ class UnifiedETFPcfManager:
                 allow_sub_redeem TEXT,                       -- 申购赎回允许情况
                 max_total_sub INTEGER,                       -- 当天累计可申购的基金份额上限
                 max_total_redeem INTEGER,                    -- 当天累计可赎回的基金份额上限
-                create_time TIMESTAMP DEFAULT (datetime('now','localtime')) -- 记录创建时间
+                create_time TIMESTAMP DEFAULT (datetime('now','localtime')), -- 记录创建时间
+                UNIQUE (fund_code, trade_date)
             )
         ''')
         # 创建索引（在表创建后单独执行）
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_basic_fund_date ON etf_pcf_basic_info(fund_code, trade_date)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_basic_date_fund ON etf_pcf_basic_info(trade_date, fund_code)')
 
         # 创建深证ETF原始数据表
         cursor.execute('''
@@ -93,12 +97,14 @@ class UnifiedETFPcfManager:
                 redeem_cash_amount REAL,                     -- 赎回替代金额 --上证etf没有此列
                 market TEXT,                                 -- 挂牌市场  
                 mapping_code TEXT,                           -- 映射代码
-                create_time TIMESTAMP DEFAULT (datetime('now','localtime')) -- 记录创建时间
+                create_time TIMESTAMP DEFAULT (datetime('now','localtime')), -- 记录创建时间
+                UNIQUE (fund_code, trade_date, stock_code)
+                
             )
         ''')
 
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_component_fund_date '
-                       'ON etf_pcf_component_info(fund_code, trade_date)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_component_date_fund '
+                       'ON etf_pcf_component_info(trade_date, fund_code)')
 
         conn.commit()
         conn.close()
@@ -124,6 +130,14 @@ class UnifiedETFPcfManager:
             logger.warning(f"无法判断ETF代码{etf_code}的市场类型，默认使用上证")
             return 'shang'
 
+    def check_db_exist(self, etf_code: str, date_str: str):
+        try:
+            data = self.query_etf_data(etf_code, date_str)
+            return data.get('basic_info', None) and data.get('components', None)
+        except Exception as e:
+            logger.error(e, exc_info=True)
+        return False
+
     def get_etf_pcf_data(self, etf_code: str, date_str: str, save_dir: Optional[str] = None) -> Dict[str, Any]:
         """
         获取ETF PCF数据的主要接口
@@ -138,6 +152,16 @@ class UnifiedETFPcfManager:
         """
         market_type = self._get_market_type(etf_code)
 
+        if self.check_db_exist(etf_code, date_str):
+            logger.info(f'etf_code:{etf_code}, date_str:{date_str} exist in db.')
+            return {
+                "success": True,
+                "etf_code": etf_code,
+                "date": date_str,
+                "market": market_type,
+                "msg": 'db_exists.'
+            }
+
         try:
             if market_type == '上证':
                 return self._get_shang_pcf_data(etf_code, date_str, save_dir)
@@ -145,7 +169,8 @@ class UnifiedETFPcfManager:
                 return self._get_shen_pcf_data(etf_code, date_str, save_dir)
         except Exception as e:
             error_msg = f"获取ETF {etf_code} 数据失败: {str(e)}"
-            logger.error(error_msg)
+            logger.error(error_msg, exc_info=True)
+            # raise e
             return {
                 "success": False,
                 "error": error_msg,
@@ -159,6 +184,7 @@ class UnifiedETFPcfManager:
         # 下载并解析数据
         result = self.shang_manager.get_etf_pcf_data(etf_code, date_str, save_dir)
 
+        print(f"_get_shang_pcf_data.success={result['success']}")
         if not result['success']:
             return {
                 "success": False,
@@ -231,7 +257,7 @@ class UnifiedETFPcfManager:
             basic_info = data.get('basic_info', {})
             components = data.get('data', [])
             print(basic_info)
-            for i in components[:10]:
+            for i in components[:5]:
                 print(i)
 
             # 存储基本信息
@@ -319,6 +345,7 @@ class UnifiedETFPcfManager:
             try:
                 sub_flag = int(sub_flag)
             except (ValueError, TypeError):
+                print(f'sub_flag={sub_flag}, error.')
                 sub_flag = 0
 
             try:
@@ -491,6 +518,7 @@ class UnifiedETFPcfManager:
                 try:
                     logger.info(f"处理ETF {etf_code} 在 {date_str} 的数据")
                     result = self.get_etf_pcf_data(etf_code, date_str, save_dir)
+                    time.sleep(0.1)
 
                     if result.get("success", False):
                         results["successful_requests"] += 1
@@ -745,10 +773,16 @@ class TestUnifiedETFPcfManager:
         """测试批量更新，从数据库验证结果"""
         print("\n=== 测试批量更新 ===")
         manager = UnifiedETFPcfManager("test_etf.db")
-
-        etf_codes = ["510300", "159919"]
-        start_date = "20251205"
-        end_date = "20251205"
+        import easyquotation
+        quotation = easyquotation.use('jsl')  # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
+        # res = quotation.market_snapshot(prefix=True)
+        res = quotation.etfindex(index_id="", min_volume=0, max_discount=None, min_discount=None)
+        #
+        etf_codes = res.keys()
+        etf_codes = [i for i in etf_codes if i[0] == '5']
+        # etf_codes = ["510010"]
+        start_date = "20251211"
+        end_date = "20251211"
 
         # 执行批量更新
         results = manager.batch_update_etf_data(etf_codes, start_date, end_date)
@@ -761,3 +795,4 @@ class TestUnifiedETFPcfManager:
 
 if __name__ == '__main__':
     TestUnifiedETFPcfManager.test_batch_update()
+## {'instrument_id': '600018', 'instrument_name': '上港集团', 'quantity': 500, 'substitution_flag': 1, 'creation_premium_rate': 0.34, 'redemption_discount_rate': 0.0, 'substitution_cash_amount': None, 'underlying_security_id': '101'}
