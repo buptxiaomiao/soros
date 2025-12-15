@@ -9,6 +9,7 @@ from urllib.parse import quote, unquote
 import chardet
 import sys
 sys.path.append('..')
+sys.path.append('../..')
 from rt.api.thread_pool_executor import ThreadPoolExecutorBase
 
 # 配置日志

@@ -779,10 +779,10 @@ class TestUnifiedETFPcfManager:
         res = quotation.etfindex(index_id="", min_volume=0, max_discount=None, min_discount=None)
         #
         etf_codes = res.keys()
-        etf_codes = [i for i in etf_codes if i[0] == '5']
+        # etf_codes = [i for i in etf_codes if i[0] != '5']
         # etf_codes = ["510010"]
-        start_date = "20251211"
-        end_date = "20251211"
+        start_date = "20251215"
+        end_date = "20251215"
 
         # 执行批量更新
         results = manager.batch_update_etf_data(etf_codes, start_date, end_date)

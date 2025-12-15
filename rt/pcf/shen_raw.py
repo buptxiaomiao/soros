@@ -7,6 +7,10 @@ from datetime import datetime
 import chardet
 import pandas as pd
 import requests
+import sys
+sys.path.append('..')
+sys.path.append('../..')
+from rt.api.thread_pool_executor import ThreadPoolExecutorBase
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -101,7 +105,7 @@ class ShenETFPcfParser:
             save_path = f"shen_pcf/pcf_{etf_code}_{date_str}.xml"
 
         try:
-            response = self.session.get(url, timeout=30)
+            response = self.session.get(url, timeout=30, proxies=ThreadPoolExecutorBase.get_proxy_conf())
 
             if response.status_code == 200:
                 # 尝试多种编码方式处理响应内容
