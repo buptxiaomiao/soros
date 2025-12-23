@@ -1,15 +1,18 @@
 import easyquotation
 import pandas as pd
+from monkey_easyq import monkey_easyq_wrapper
 
 
 def get_all_stock_rt():
 
     quotation = easyquotation.use('tencent') # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
-    res = quotation.market_snapshot(prefix=False)
+    quotation = monkey_easyq_wrapper(quotation)
+    res = quotation.market_snapshot(prefix=True)
     # 将字典值转换为列表，然后创建DataFrame
     data_list = [value for value in res.values()]
     df = pd.DataFrame(data_list)
     print(df.head(1))
+    print(df.shape)
     print(df.columns)
     # Index(['name', 'code', 'now', 'close', 'open', 'volume', 'bid_volume',
     #        'ask_volume', 'bid1', 'bid1_volume', 'bid2', 'bid2_volume', 'bid3',
@@ -21,12 +24,8 @@ def get_all_stock_rt():
     #        '跌停价', '量比', '委差', '均价', '市盈(动)', '市盈(静)'],
     #       dtype='object')
 
-    df.columns = [
-        'TS_CODE', 'NAME', 'price', 'PCT_CHANGE', 'amount', 'high', 'low', 'vol_ratio', 'pre_close', 'total_mv',
-        'float_mv',
-        'pe_ttm', 'turnover_rate', 'change', 'volume', 'swing', 'open', 'pb', 'change_pct_60', 'change_pct_this_year'
-    ]
     return df
+
 
 if __name__ == '__main__':
     get_all_stock_rt()

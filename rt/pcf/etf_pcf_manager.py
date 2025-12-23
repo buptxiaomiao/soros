@@ -1,12 +1,21 @@
-import sqlite3
 import logging
+import sqlite3
 import time
-from datetime import datetime, timedelta
+import click
+import sys
+import fire
+
+from datetime import datetime
+from datetime import timedelta
 from typing import Dict, List, Optional, Any
-import json
 
 # 导入您现有的类
 import pandas as pd
+
+sys.path.append('..')
+sys.path.append('./..')
+
+from rt.store.SqliteUtil import SqliteHelper, DBType
 
 from shang_etf_pcf_manager import ShangETFPcfManager
 from shen_raw import ShenETFPcfParser
@@ -22,14 +31,11 @@ class UnifiedETFPcfManager:
     支持上证和深证ETF，自动判断市场并选择相应的处理器
     """
 
-    def __init__(self, db_path: str = "etf_pcf_data.db"):
+    def __init__(self, trade_date):
         """
         初始化统一管理器
-
-        Args:
-            db_path: SQLite数据库文件路径
         """
-        self.db_path = db_path
+        self.db = SqliteHelper(db_type=DBType.ETF_PCF_DB, trade_date=trade_date)
         self.shang_manager = ShangETFPcfManager()
         self.shen_parser = ShenETFPcfParser()
 
@@ -38,7 +44,8 @@ class UnifiedETFPcfManager:
 
     def _init_database(self):
         """初始化数据库表结构"""
-        conn = sqlite3.connect(self.db_path)
+        conn = self.db.get_connection()
+
         cursor = conn.cursor()
 
         # 创建上证ETF PCF数据表
@@ -108,7 +115,7 @@ class UnifiedETFPcfManager:
 
         conn.commit()
         conn.close()
-        logger.info(f"数据库初始化完成: {self.db_path}")
+        logger.info(f"数据库初始化完成: {self.db}")
 
     def _get_market_type(self, etf_code: str) -> str:
         """
@@ -250,7 +257,7 @@ class UnifiedETFPcfManager:
         Returns:
             存储结果
         """
-        conn = sqlite3.connect(self.db_path)
+        conn = self.db.get_connection()
         cursor = conn.cursor()
 
         try:
@@ -321,7 +328,7 @@ class UnifiedETFPcfManager:
         except Exception as e:
             conn.rollback()
             logger.error(f"存储上证ETF数据失败: {str(e)}")
-            raise e
+            # raise e
             return {
                 "success": False,
                 "error": str(e)
@@ -377,7 +384,7 @@ class UnifiedETFPcfManager:
         Returns:
             存储结果
         """
-        conn = sqlite3.connect(self.db_path)
+        conn = self.db.get_connection()
         cursor = conn.cursor()
 
         try:
@@ -554,7 +561,7 @@ class UnifiedETFPcfManager:
         Returns:
             包含ETF基本信息和成分股的字典
         """
-        conn = sqlite3.connect(self.db_path)
+        conn = self.db.get_connection()
 
         try:
             if date_str:
@@ -601,7 +608,7 @@ class UnifiedETFPcfManager:
 
     def get_etf_list(self) -> List[str]:
         """获取数据库中所有的ETF代码列表"""
-        conn = sqlite3.connect(self.db_path)
+        conn = self.db.get_connection()
         try:
             cursor = conn.cursor()
             cursor.execute('SELECT DISTINCT fund_code FROM etf_pcf_basic_info ORDER BY fund_code')
@@ -611,7 +618,7 @@ class UnifiedETFPcfManager:
 
     def get_date_range(self, etf_code: str) -> tuple:
         """获取指定ETF的日期范围"""
-        conn = sqlite3.connect(self.db_path)
+        conn = self.db.get_connection()
         try:
             cursor = conn.cursor()
             cursor.execute('''
@@ -769,21 +776,76 @@ class TestUnifiedETFPcfManager:
         return result.get("success", False) and has_data
 
     @staticmethod
-    def test_batch_update():
-        """测试批量更新，从数据库验证结果"""
-        print("\n=== 测试批量更新 ===")
-        manager = UnifiedETFPcfManager("test_etf.db")
-        import easyquotation
-        quotation = easyquotation.use('jsl')  # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
-        # res = quotation.market_snapshot(prefix=True)
-        res = quotation.etfindex(index_id="", min_volume=0, max_discount=None, min_discount=None)
-        #
-        etf_codes = res.keys()
-        # etf_codes = [i for i in etf_codes if i[0] != '5']
-        # etf_codes = ["510010"]
-        start_date = "20251215"
-        end_date = "20251215"
+    def _validate_date_format(date_str: str) -> bool:
+        """
+        验证日期字符串格式是否为 YYYYMMDD
 
+        参数:
+            date_str: 待验证的日期字符串
+
+        返回:
+            bool: 格式正确返回 True，否则返回 False
+        """
+        try:
+            datetime.strptime(date_str, '%Y%m%d')
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    # @click.command()
+    # @click.option('--start-date', '-s',
+    #               default=datetime.now().strftime('%Y%m%d'),
+    #               help='起始日期 (格式: YYYYMMDD)，默认为当天')
+    # @click.option('--end-date', '-e',
+    #               default=datetime.now().strftime('%Y%m%d'),
+    #               help='结束日期 (格式: YYYYMMDD)，默认为当天')
+    # @click.option('--market', '-m',
+    #               default='',
+    #               help='指定市场代码，为空则获取全部, 深圳市场可获取历史,输入shen')
+    # @click.option('--etf-codes', '-c',
+    #               default='',
+    #               help='指定ETF代码，多个代码用逗号分隔，为空则获取全部')
+    def test_batch_update(start_date=None, end_date=None, market=None, etf_codes=None):
+        """
+        批量获取ETF-pcf数据，从数据库验证结果
+        示例用法:
+        python script.py --start-date 20251223 --end-date 20251223 --market shen --etf-codes 159509,159510
+        """
+        click.echo("\n=== 测试批量更新 ===")
+        print("\n=== 测试批量更新 ===")
+        # 设置默认日期为当天（如果未提供参数）
+        if start_date is None:
+            start_date = datetime.now().strftime("%Y%m%d")
+        if end_date is None:
+            end_date = datetime.now().strftime("%Y%m%d")
+        # 输入参数验证
+        if not TestUnifiedETFPcfManager._validate_date_format(start_date):
+            click.echo(f"错误: 起始日期格式不正确: {start_date}，应为YYYYMMDD格式")
+            return
+        if not TestUnifiedETFPcfManager._validate_date_format(end_date):
+            click.echo(f"错误: 结束日期格式不正确: {end_date}，应为YYYYMMDD格式")
+            return
+
+        click.echo(f"日期范围: {start_date} 至 {end_date}")
+        click.echo(f"市场: {market}")
+
+        if etf_codes:
+            specified_codes = [code.strip() for code in etf_codes.split(',')]
+            click.echo(f"指定ETF代码: {specified_codes}")
+            etf_codes = specified_codes
+        else:
+            import easyquotation
+            quotation = easyquotation.use('jsl')  # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
+            res = quotation.etfindex()
+            etf_codes = res.keys()
+            if market and market == 'shen':
+                etf_codes = [i for i in etf_codes if i[0] != '5']
+
+        print(f'etf_codes.size={len(etf_codes)}, start_date={start_date}, end_date={end_date}')
+        etf_codes = list(etf_codes)[:10]
+
+        manager = UnifiedETFPcfManager(end_date)
         # 执行批量更新
         results = manager.batch_update_etf_data(etf_codes, start_date, end_date)
 
@@ -792,7 +854,28 @@ class TestUnifiedETFPcfManager:
         print(f"成功请求: {results['successful_requests']}")
         print(f"失败请求: {results['failed_requests']}")
 
+    @staticmethod
+    def run_yesterday():
+        """昨日数据"""
+        today = datetime.now()
+        # 计算昨天的日期时间
+        yesterday = today - timedelta(days=1)
+        # 格式化为 'YYYYMMDD' 的字符串
+        yesterday_str = yesterday.strftime('%Y%m%d')
+        TestUnifiedETFPcfManager.test_batch_update(yesterday_str, yesterday_str, None, [])
+
+
+def main():
+    """主函数：将当前模块暴露为CLI工具。"""
+    fire.Fire({
+        "today": TestUnifiedETFPcfManager.test_batch_update,
+        "yesterday": TestUnifiedETFPcfManager.run_yesterday,
+    })
+
 
 if __name__ == '__main__':
-    TestUnifiedETFPcfManager.test_batch_update()
-## {'instrument_id': '600018', 'instrument_name': '上港集团', 'quantity': 500, 'substitution_flag': 1, 'creation_premium_rate': 0.34, 'redemption_discount_rate': 0.0, 'substitution_cash_amount': None, 'underlying_security_id': '101'}
+    # TestUnifiedETFPcfManager.test_batch_update()
+    # TestUnifiedETFPcfManager.run_yesterday()
+    # TestUnifiedETFPcfManager.run_yesterday()
+    main()
+

@@ -124,7 +124,7 @@ if __name__ == '__main__':
     pd.set_option('display.max_columns', None)  # 显示所有列
     # res = get_stock_minutes_rt("872190") # 北证0
     # df = get_stock_minutes_rt("002409", klt=1)
-    df = get_stock_minutes_rt("002409", klt=101, end='20250830')
+    df = get_stock_minutes_rt("002409", klt=101, end='20190830')
     # df = get_stock_minutes_rt("563180", klt=1)
     print(df.shape)
     print(df)
