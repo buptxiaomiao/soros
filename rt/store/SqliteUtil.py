@@ -9,7 +9,7 @@ from typing import List, Tuple, Any
 import dotenv
 
 sys.path.append('..')
-sys.path.append('./..')
+sys.path.append('../..')
 dotenv.load_dotenv()
 env = os.getenv("env")
 

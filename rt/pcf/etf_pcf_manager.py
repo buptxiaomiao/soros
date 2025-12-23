@@ -13,7 +13,7 @@ from typing import Dict, List, Optional, Any
 import pandas as pd
 
 sys.path.append('..')
-sys.path.append('./..')
+sys.path.append('../..')
 
 from rt.store.SqliteUtil import SqliteHelper, DBType
 
