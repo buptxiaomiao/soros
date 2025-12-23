@@ -843,7 +843,7 @@ class TestUnifiedETFPcfManager:
                 etf_codes = [i for i in etf_codes if i[0] != '5']
 
         print(f'etf_codes.size={len(etf_codes)}, start_date={start_date}, end_date={end_date}')
-        etf_codes = list(etf_codes)[:10]
+        # etf_codes = list(etf_codes)[:10]
 
         manager = UnifiedETFPcfManager(end_date)
         # 执行批量更新
