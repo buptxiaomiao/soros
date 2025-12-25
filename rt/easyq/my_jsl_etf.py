@@ -80,16 +80,38 @@ class MyJslETF:
         columns = list(res_list[0].keys()) if len(res_list) > 0 else []
         print(f"total_size={len(res_list)}")
         print(f"columns.size={len(columns)} columns={columns}")
-        for i in res_list[:3]:
-            print(i)
+        fix_list = [i for i in res_list
+                    if i.get('apply_status', '') not in ('暂停申购', '')
+                    and '-' not in i.get('discount_rt', '-')
+                    and float(str(i.get('discount_rt')).replace('%', '')) > 2
+                    ]
+        # fix_list = res_list
+        for i in fix_list:
+            discount_rt = str(i.get('discount_rt')).replace('%', '')
+            print(f"溢价：{discount_rt} "
+                  f" {i.get('fund_id')} "
+                  f" {i.get('fund_nm')}"
+                  f"  价格:{i.get('price')}"
+                  f"  涨幅:{i.get('increase_rt')}"
+                  # f"  预估净值:{i.get('estimate_value')}"
+                  f"  成交额{round(float(i.get('volume'))/10000, 2)}亿"
+                  f"  份额{round(float(i.get('amount'))/10000, 2)}亿"
+                  f"  份额增加{round(float(i.get('amount_incr'))/10000, 2)}亿"
+                  f"  最新净值:{i.get('fund_nav')}"
+                  f"  {i.get('apply_status')}"
+                  f"  申购费率{i.get('apply_fee')}"
+                  f"  换手{i.get('turnover_rt')}"
+                  # f"{i}"
+                  f"")
+            # print(i.get('discount_rt'), i)
 
         return res_list
 
 
 if __name__ == '__main__':
     jsl = MyJslETF()
-    index_etf = jsl.index_etf()
-    gold_etf = jsl.gold_etf()
+    # index_etf = jsl.index_etf()
+    # gold_etf = jsl.gold_etf()
     index_lof = jsl.index_lof()
     stock_lof = jsl.stock_lof()
     commodity_lof = jsl.commodity_lof()
