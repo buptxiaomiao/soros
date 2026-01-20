@@ -26,7 +26,7 @@ def _fetch_stock_data(self, stock_list, pool_size: int = 50):
     return [d for d in res if d is not None]
 
 
-def monkey_easyq_wrapper(quo: BaseQuotation, use_proxy: bool = True, pool_size: int = 50) -> BaseQuotation:
+def monkey_easyq_wrapper(quo: BaseQuotation, use_proxy: bool = True, pool_size: int = 10) -> BaseQuotation:
     proxies = ThreadPoolExecutorBase.get_proxy_conf()
 
     # 增加proxy

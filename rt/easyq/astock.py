@@ -1,13 +1,15 @@
 import easyquotation
 import pandas as pd
-from monkey_easyq import monkey_easyq_wrapper
+# from monkey_easyq import monkey_easyq_wrapper
+from rt.easyq.monkey_easyq import monkey_easyq_wrapper
 
 
 def get_all_stock_rt():
 
     quotation = easyquotation.use('tencent') # 新浪 ['sina'] 腾讯 ['tencent', 'qq']
     quotation = monkey_easyq_wrapper(quotation)
-    res = quotation.market_snapshot(prefix=True)
+    # res = quotation.market_snapshot(prefix=True)
+    res = quotation.market_snapshot(prefix=False)
     # 将字典值转换为列表，然后创建DataFrame
     data_list = [value for value in res.values()]
     df = pd.DataFrame(data_list)
@@ -24,7 +26,7 @@ def get_all_stock_rt():
     #        '跌停价', '量比', '委差', '均价', '市盈(动)', '市盈(静)'],
     #       dtype='object')
 
-    return df
+    return data_list
 
 
 if __name__ == '__main__':

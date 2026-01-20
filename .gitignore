@@ -11,3 +11,6 @@ trash
 *.xlsx
 *.xml
 *.db
+__pycache__
+*.pyc 
+.vscode

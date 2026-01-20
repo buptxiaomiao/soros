@@ -20,6 +20,13 @@ class DBType(Enum):
     每个成员的值是一个元组：(基础名称格式, 日期格式)
     """
     ETF_PCF_DB = ('etf_pcf_%s', '%Y%m')  # 例如：etf_pcf_db_202512
+    MINUTE_1_DB = ('minute_1_%s', '%Y%m')  # 例如：minute_1_202601
+    MINUTE_5_DB = ('minute_5_%s', '%Y%m')  # 例如：minute_5_202601
+    MINUTE_15_DB = ('minute_15_%s', '%Y%m')  # 例如：minute_15_202601
+    MINUTE_30_DB = ('minute_30_%s', '%Y')  # 例如：minute_30_2026
+    MINUTE_60_DB = ('minute_60_%s', '%Y')  # 例如：minute_60_2026
+    MINUTE_120_DB = ('minute_120_%s', '%Y')  # 例如：minute_120_2026
+
 
     # demo
     LOG_DB = ('log_archive_%s', '%Y%m%d')  # 例如：log_archive_202512

@@ -72,11 +72,20 @@ class StockKlineRt(ThreadPoolExecutorBase):
         klines = data.get('klines', [])
 
         # "2025-01-03 15:00,126.22,124.98,126.22,124.85,48077,602495916.00,1.09,-0.97,-1.23,0.32"
-        col_names = ['时间', '开盘', '收盘', '最高', '最低', '成交量', '成交额', '-1', '涨跌幅', '-2', '-3']
+        col_names = ['时间', '开盘', '收盘', '最高', '最低', '成交量', '成交额', '振幅', '涨跌幅', '涨跌额', '换手率']
+        print(f'market:{market}, name:{name}, kline.size={len(klines)}')
+
+        if not klines:
+            # 返回一致的列结构，包括后续计算产生的列
+            empty_cols = col_names + ['code', 'name', 'klt', 'mean', 'std', 'ub', 'lb', 'low_lt_lb', 'low_lt_lb_prev1', 'low_lt_lb_prev2', 'sell_flag']
+            df = pd.DataFrame(columns=empty_cols)
+            return df, 0
+
         klines_list = [
             dict(zip(col_names, s.split(',')))
             for s in klines
         ]
+        print(klines_list[0] if klines_list else 'klines_list empty')
         df = pd.DataFrame(klines_list).astype({
             '开盘': float,
             '收盘': float,
@@ -84,8 +93,12 @@ class StockKlineRt(ThreadPoolExecutorBase):
             '最低': float,
             '成交量': float,
             '成交额': float,
-            '涨跌幅': float
+            '振幅': float,
+            '涨跌幅': float,
+            '涨跌额': float,
+            '换手率': float
         })
+        df['code'] = code
         df['name'] = name
         df['klt'] = klt
 
