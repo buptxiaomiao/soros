@@ -32,11 +32,17 @@ class StockKlineRt(ThreadPoolExecutorBase):
         print(f"BKMemberRT.final_df.shape={final_df.shape}")
         return final_df
 
+    col_names = ['时间', '开盘', '收盘', '最高', '最低', '成交量', '成交额', '振幅', '涨跌幅', '涨跌额', '换手率']
+    # 返回一致的列结构，包括后续计算产生的列
+    empty_cols = col_names + ['code', 'name', 'klt', 'mean', 'std', 'ub', 'lb', 'low_lt_lb', 'low_lt_lb_prev1',
+                              'low_lt_lb_prev2', 'sell_flag']
+    empty_df = pd.DataFrame(columns=empty_cols)
+
     """
         code支持股票、ETF
     """
     @classmethod
-    def get_stock_minutes_rt(cls, code, klt=30, window=20, num_std=2, end=""):
+    def get_stock_minutes_rt(cls, code, klt=30, window=20, num_std=2, end="", req_tool=None):
 
 
         # secid：股票代码，格式为市场代码+股票代码，例如沪市股票的市场代码为1，深市股票的市场代码为0，股票代码为6位数字，如1.600000表示沪市股票600000。
@@ -45,7 +51,7 @@ class StockKlineRt(ThreadPoolExecutorBase):
         end_date_str = (datetime.now() + + timedelta(days=random.randint(1, 30))).strftime('%Y%m%d')
         if end:
             end_date_str = end
-        print(end_date_str)
+        # print(end_date_str)
 
         url = (base_url +
                f"?secid={mkt}.{code}"
@@ -54,12 +60,15 @@ class StockKlineRt(ThreadPoolExecutorBase):
                f"&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61"
                f"&klt={klt}" # klt：K线类型，例如1表示1分钟，5表示5分钟，101表示日K线等。
                f"&end={end_date_str}"
-               f"&lmt=240"
+               f"&lmt=500"
                f"&fqt=1" # fqt：复权类型，例如0表示不复权，1表示前复权，2表示后复权。
                f"")
         print(url)
         # response = request("GET", url)
-        response = requests.get(url,  proxies=cls.get_proxy_conf())
+        if req_tool is None:
+            response = requests.get(url,  proxies=cls.get_proxy_conf())
+        else:
+            response = req_tool.get(url, proxies=cls.get_proxy_conf())
         res_json = response.json()
         print(res_json)
         data = res_json['data']
@@ -77,9 +86,7 @@ class StockKlineRt(ThreadPoolExecutorBase):
 
         if not klines:
             # 返回一致的列结构，包括后续计算产生的列
-            empty_cols = col_names + ['code', 'name', 'klt', 'mean', 'std', 'ub', 'lb', 'low_lt_lb', 'low_lt_lb_prev1', 'low_lt_lb_prev2', 'sell_flag']
-            df = pd.DataFrame(columns=empty_cols)
-            return df, 0
+            return cls.empty_df, 0
 
         klines_list = [
             dict(zip(col_names, s.split(',')))

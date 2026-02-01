@@ -38,13 +38,14 @@ class StockScraperBase(ABC):
         adapter = requests.adapters.HTTPAdapter(pool_connections=self.max_workers, pool_maxsize=self.max_workers)
         s.mount('http://', adapter)
         s.mount('https://', adapter)
+        s.headers.update({'referer': 'https://quote.eastmoney.com/kcb/688365.html'})
         return s
 
     def _setup_logging(self):
         logger = logging.getLogger(self.subclass_name)
         if not logger.handlers:
             logger.setLevel(logging.INFO)
-            handler = RotatingFileHandler(f"{self.subclass_name}.log", maxBytes=1 * 1024 * 1024, backupCount=2)
+            handler = RotatingFileHandler(f"{self.subclass_name}.log", maxBytes=100 * 1024 * 1024, backupCount=2)
             formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
             handler.setFormatter(formatter)
             logger.addHandler(handler)

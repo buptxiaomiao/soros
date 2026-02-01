@@ -110,7 +110,7 @@ class ScraperStockKline(StockScraperBase):
 
         # 2. 发起请求
         # 注意：这里不需要写 try-except，基类的 _worker 会统一处理并重试
-        res = StockKlineRt.get_stock_minutes_rt(code, self.kline_type)
+        res = StockKlineRt.get_stock_minutes_rt(code, self.kline_type, req_tool=self.session)
         df = res[0]
         df = df.iloc[20:].copy()
         data_list = df.to_dict('records')
@@ -141,7 +141,7 @@ class ScraperStockKline(StockScraperBase):
 
 
 if __name__ == '__main__':
-    stock_scraper = ScraperStockKline()
+    stock_scraper = ScraperStockKline(15)
     stock_scraper.main()
     stock_scraper.main()
     stock_scraper.main()
