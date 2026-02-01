@@ -14,3 +14,7 @@ trash
 __pycache__
 *.pyc 
 .vscode
+*.log
+*.log.*
+*.db-shm
+*.db-wal

@@ -26,6 +26,9 @@ class DBType(Enum):
     MINUTE_30_DB = ('minute_30_%s', '%Y')  # 例如：minute_30_2026
     MINUTE_60_DB = ('minute_60_%s', '%Y')  # 例如：minute_60_2026
     MINUTE_120_DB = ('minute_120_%s', '%Y')  # 例如：minute_120_2026
+    DC_DAY_DB = ('dc_day_%s', None)
+    DC_WEEK_DB = ('dc_day_%s', None)
+    DC_MONTH_DB = ('dc_month_%s', None)
 
 
     # demo
@@ -118,7 +121,7 @@ class SqliteHelper:
         Returns:
             sqlite3.Connection: SQLite 数据库连接对象
         """
-        return sqlite3.connect(self.db_path)
+        return sqlite3.connect(self.db_path, timeout=60)
 
     def execute(self, sql: str, parameters: Any = None) -> Any:
         """

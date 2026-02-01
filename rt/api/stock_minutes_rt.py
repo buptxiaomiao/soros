@@ -85,7 +85,7 @@ class StockKlineRt(ThreadPoolExecutorBase):
             dict(zip(col_names, s.split(',')))
             for s in klines
         ]
-        print(klines_list[0] if klines_list else 'klines_list empty')
+        print(klines_list[-1] if klines_list else 'klines_list empty')
         df = pd.DataFrame(klines_list).astype({
             '开盘': float,
             '收盘': float,
@@ -137,7 +137,7 @@ if __name__ == '__main__':
     pd.set_option('display.max_columns', None)  # 显示所有列
     # res = get_stock_minutes_rt("872190") # 北证0
     # df = get_stock_minutes_rt("002409", klt=1)
-    df = get_stock_minutes_rt("002409", klt=101, end='20190830')
+    df = get_stock_minutes_rt("002409", klt=30, end='20500101')
     # df = get_stock_minutes_rt("563180", klt=1)
     print(df.shape)
     print(df)
