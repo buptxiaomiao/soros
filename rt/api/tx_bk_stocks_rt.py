@@ -45,11 +45,11 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
         else:
             hy_res = get_tx_sw_hy1_rt()
         hy_df = hy_res[0]
-        bk_code_list = list(hy_df['板块代码'])
-        print(bk_code_list)
-        args = [[i] for i in bk_code_list]
+        hy_data_list = hy_df.to_dict(orient='records')
+        args = [ [item['板块代码'], item['板块名称']] for item in hy_data_list]
+
         result_df_list = cls.run_by_pool_pro(fetch_func=cls.get_tx_bk_stocks_list, args=args)
-        print(f"get_sw_hy_stocks_rt_all len(result_df_list)={len(result_df_list)}")
+        # print(f"get_sw_hy_stocks_rt_all len(result_df_list)={len(result_df_list)}")
         final_df = pd.concat(result_df_list, ignore_index=True)
         return final_df
 
@@ -96,7 +96,7 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
 
     @classmethod
     @retry(stop_max_attempt_number=3, wait_fixed=200)
-    def get_tx_bk_stocks_list(cls, plate_code, req=None):
+    def get_tx_bk_stocks_list(cls, plate_code, plate_name='', req=None):
         """
         腾讯财经-板块成分股实时行情
         :param plate_code: 板块代码，如 '01801733'
@@ -128,7 +128,7 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
         else:
             r = req.get(base_url, params=params, proxies=cls.get_proxy_conf(),headers=headers)
         data_json = r.json()
-        print(data_json)
+        # print(data_json)
 
         quote_statis = data_json['quote_statis']
         down_cnt = quote_statis['down_cnt']
@@ -170,7 +170,7 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
         column_map = {item[0]: item[1] for item in cls.field_config if item[0] in temp_df.columns}
         temp_df.rename(columns=column_map, inplace=True)
 
-        print(temp_df)
+        # print(temp_df)
 
         # 数值类型转换（必须在应用转换函数之前）
         numeric_cols = ['最新价', '涨跌额', '涨跌幅', '5日涨跌幅', '20日涨跌幅',
@@ -181,7 +181,7 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
                         '振幅', '市盈率(TTM)']
         for col in numeric_cols:
             if col in temp_df.columns:
-                print(f"begin. {col}")
+                # print(f"begin. {col}")
                 temp_df[col] = pd.to_numeric(temp_df[col], errors="coerce")
 
         # 应用转换函数（此时已是数值类型）
@@ -201,9 +201,10 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
             temp_df['股票名称'] = temp_df['股票名称'].str.replace('\u3000', '').str.replace(' ', '')
 
         temp_df['板块代码'] = plate_code
+        temp_df['板块名称'] = plate_name
 
         all_columns = [
-            '板块代码',
+            '板块代码', '板块名称',
             # 基础信息
             '股票代码m', '股票代码', '股票名称',
             # 价格指标
