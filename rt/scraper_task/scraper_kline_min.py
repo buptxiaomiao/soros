@@ -141,8 +141,34 @@ class ScraperStockKline(StockScraperBase):
 
 
 if __name__ == '__main__':
+
+    stock_scraper = ScraperStockKline(30)
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+
+    stock_scraper = ScraperStockKline(5)
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+
     stock_scraper = ScraperStockKline(15)
     stock_scraper.main()
     stock_scraper.main()
     stock_scraper.main()
     stock_scraper.main()
+
+    stock_scraper = ScraperStockKline(60)
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+
+    stock_scraper = ScraperStockKline(1)
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+    stock_scraper.main()
+

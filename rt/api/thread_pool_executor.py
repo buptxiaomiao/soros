@@ -7,6 +7,7 @@ from typing import List
 import os
 import dotenv
 import sys
+import requests
 
 sys.path.append('..')
 sys.path.append('./..')
@@ -17,6 +18,8 @@ sec = os.getenv("proxy_secret")
 
 
 class ThreadPoolExecutorBase:
+
+    session = requests.Session()
 
     proxy_conf = {}
 
@@ -40,7 +43,7 @@ class ThreadPoolExecutorBase:
     @classmethod
     def run_by_pool_pro(cls, fetch_func, args) -> List[DataFrame]:
         results = []
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=20) as executor:
             # 提交任务到线程池
             futures = [executor.submit(fetch_func, *arg)
                        for arg in args]

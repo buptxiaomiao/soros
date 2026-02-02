@@ -28,27 +28,6 @@ class TXSwHyRT(ThreadPoolExecutorBase):
     腾讯财经-申万行业板块实时行情
     """
 
-    @classmethod
-    def run(cls):
-        func = cls.get_tx_sw_hy_list
-        total_page = cls.get_total_page()
-        result_df_list = cls.run_by_pool(fetch_func=func, total_page=total_page)
-
-        # 拼接所有分页数据
-        final_df = pd.concat(result_df_list, ignore_index=True)
-        final_df = final_df.sort_values(by='涨跌幅', ascending=False).reset_index(drop=True)
-        return final_df
-
-    @classmethod
-    def get_total_page(cls, page_size=20):
-        if hasattr(cls, 'total_page'):
-            return getattr(cls, 'total_page')
-        (df, total_cnt) = cls.get_tx_sw_hy_list(page_no=1)
-        actual_size = df.shape[0]
-        total_page = int(total_cnt / actual_size + 1) if actual_size > 0 else 0
-        setattr(cls, 'total_page', total_page)
-        return total_page
-
     divide_100_func = lambda x: x / 100
     divide_10000_func = lambda x: x / 10000  # 成交量单位处理
     divide_10000_round_func = lambda x: round(x / 10000, 2)  # 成交额/市值单位处理
@@ -157,6 +136,11 @@ class TXSwHyRT(ThreadPoolExecutorBase):
                 temp_df[item[1]] = temp_df[item[1]].apply(item[2])
 
         # 处理领涨股_code：新增领涨股_mcode保存原始值，code去掉前两位市场前缀
+        if '板块代码' in temp_df.columns:
+            temp_df['pt板块代码'] = temp_df['板块代码']  # 保存原始值
+            temp_df['板块代码'] = temp_df['板块代码'].astype(str).str[2:]  # 去掉前两位
+
+        # 处理领涨股_code：新增领涨股_mcode保存原始值，code去掉前两位市场前缀
         if '领涨股_code' in temp_df.columns:
             temp_df['领涨股_mcode'] = temp_df['领涨股_code']  # 保存原始值
             temp_df['领涨股_code'] = temp_df['领涨股_code'].astype(str).str[2:]  # 去掉前两位
@@ -228,7 +212,7 @@ class TXSwHyRT(ThreadPoolExecutorBase):
         # ======================================
         all_columns = [
             # 基础信息
-            '板块代码', '板块名称',
+            'pt板块代码', '板块代码', '板块名称',
             # 价格指标
             '最新价', '涨跌额',
             # 涨跌幅指标
