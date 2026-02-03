@@ -10,6 +10,8 @@ from rt.scraper_task.scraper_task_base import StockScraperBase
 
 class ScraperStockKline(StockScraperBase):
 
+    all_codes = []
+
     KLT_TO_DB_TYPE = {
         1: DBType.MINUTE_1_DB,
         5: DBType.MINUTE_5_DB,
@@ -34,9 +36,12 @@ class ScraperStockKline(StockScraperBase):
         # self.run(['000001', '688018', '600809'])
 
     def get_all_codes(self):
+        if self.all_codes:
+            return self.all_codes
         data_list = get_all_stock_rt()
         code_list = [i['code'] for i in data_list]
-        return code_list
+        self.all_codes = code_list
+        return self.all_codes
 
     cols = [
         'trade_time', 'code', 'name', 'open', 'close', 'high', 'low', 'volume', 'amount', 'amplitude',
