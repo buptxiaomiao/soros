@@ -24,3 +24,4 @@ pybitmap~=0.0.2
 pypdf2~=3.0.1
 selenium~=4.36.0
 yfinance~=0.2.66
+buenavista==0.5.0
