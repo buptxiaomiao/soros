@@ -26,12 +26,14 @@ class DBType(Enum):
     MINUTE_30_DB = ('minute_30_%s', '%Y')  # 例如：minute_30_2026
     MINUTE_60_DB = ('minute_60_%s', '%Y')  # 例如：minute_60_2026
     MINUTE_120_DB = ('minute_120_%s', '%Y')  # 例如：minute_120_2026
-    DC_DAY_DB = ('dc_day_%s', None)
-    DC_WEEK_DB = ('dc_day_%s', None)
-    DC_MONTH_DB = ('dc_month_%s', None)
+    DC_DAY_DB = ('dc_day', None)
+    DC_WEEK_DB = ('dc_week', None)
+    DC_MONTH_DB = ('dc_month', None)
 
     JSL_CALENDAR = ('jsl_calendar', None)
 
+    # 腾讯申万行业板块数据，按年分库
+    TX_SW_HY = ('tx_sw_hy_%s', '%Y')
 
     # demo
     LOG_DB = ('log_archive_%s', '%Y%m%d')  # 例如：log_archive_202512
