@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import datetime
 import time
 import uuid
 import pandas as pd
@@ -11,6 +12,7 @@ from retrying import retry
 
 from rt.api.thread_pool_executor import ThreadPoolExecutorBase
 from rt.api.industry_bk_list_rt import IndustryBKListRT
+from rt.api.trading_time_util import get_last_trading_end_time
 
 
 def get_bk_member_df():
@@ -155,6 +157,11 @@ class BKMemberRT(ThreadPoolExecutorBase):
 
         temp_df['bk_code'] = bk_code
         temp_df['bk_name'] = bk_name
+
+        # 添加交易时间和爬取时间
+        temp_df['trade_time'] = get_last_trading_end_time()
+        temp_df['crawl_time'] = datetime.datetime.now()
+
         return temp_df, total_num
 
 

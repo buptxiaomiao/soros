@@ -21,12 +21,20 @@ class ThreadPoolExecutorBase:
 
     session = requests.Session()
 
+    # 调整连接池大小
+    adapter = requests.adapters.HTTPAdapter(
+        pool_connections=20,  # 缓存的连接池数量
+        pool_maxsize=20  # 每个 host 的最大连接数
+    )
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
     proxy_conf = {}
 
     @classmethod
     def run_by_pool(cls, fetch_func, total_page) -> List[DataFrame]:
         results = []
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=20) as executor:
             # 提交任务到线程池
             futures = [executor.submit(fetch_func, page_no)
                        for page_no in range(1, total_page + 1)]

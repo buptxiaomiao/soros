@@ -2,13 +2,17 @@
 # -*- coding:utf-8 -*-
 
 import hashlib
+import logging
+
 import pandas as pd
 import requests
 import time
+import datetime
 from retrying import retry
 
 from rt.api.tx_sw_hy_rt import get_tx_sw_hy1_rt, get_tx_sw_hy2_rt
 from rt.api.thread_pool_executor import ThreadPoolExecutorBase
+from rt.api.trading_time_util import get_last_trading_end_time
 
 # 接口
 # https://bisheng.tenpay.com/fcgi-bin/xg_plate_stocks.fcgi?exchange=12&plate_code=01801733&sort_type=1&source=zxg&stocks_type=3&time=1770043389166&user_type=4&sign=e36ba88617a2261b7241c33f515a5264
@@ -203,7 +207,12 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
         temp_df['板块代码'] = plate_code
         temp_df['板块名称'] = plate_name
 
+        # 添加交易时间和爬取时间
+        temp_df['trade_time'] = get_last_trading_end_time()
+        temp_df['crawl_time'] = datetime.datetime.now()
+
         all_columns = [
+            'trade_time',
             '板块代码', '板块名称',
             # 基础信息
             '股票代码m', '股票代码', '股票名称',
@@ -216,6 +225,7 @@ class TXBkStocksRT(ThreadPoolExecutorBase):
             # 市值指标
             '总市值', '流通市值', '市盈率(TTM)',
             '股票类型', '标签',
+            'crawl_time'
         ]
         # 筛选存在的列
         new_columns = [col for col in all_columns if col in temp_df.columns]
@@ -256,8 +266,10 @@ if __name__ == '__main__':
     pd.set_option('display.max_columns', None)  # 显示所有列
 
     res1 = get_sw_hy1_stocks_rt_all()
-    res1.to_csv('sw_hy1_stocks_rt.csv', index=False, header=True)
+    res1.to_csv('tx_bk_sw_hy1_stocks_rt.csv', index=False, header=True)
+    logging.info(f"get_sw_hy1_stocks_rt_all done shape={res1.shape}")
 
     res2 = get_sw_hy2_stocks_rt_all()
-    res2.to_csv('sw_hy2_stocks_rt.csv', index=False, header=True)
+    res2.to_csv('tx_bk_sw_hy2_stocks_rt.csv', index=False, header=True)
+    logging.info(f"get_sw_hy2_stocks_rt_all done shape={res2.shape}")
     pass

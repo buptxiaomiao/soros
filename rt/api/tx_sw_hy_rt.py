@@ -3,9 +3,11 @@
 
 import pandas as pd
 import requests
+import datetime
 from retrying import retry
 
 from rt.api.thread_pool_executor import ThreadPoolExecutorBase
+from rt.api.trading_time_util import get_last_trading_end_time
 
 # 页面
 # https://stockapp.finance.qq.com/mstats/#mod=list&id=hy_first&module=hy&type=first&sort=8&page=1&max=20
@@ -164,6 +166,10 @@ class TXSwHyRT(ThreadPoolExecutorBase):
                 axis=1
             )
 
+        # 添加交易时间和爬取时间
+        temp_df['trade_time'] = get_last_trading_end_time()
+        temp_df['crawl_time'] = datetime.datetime.now()
+
         # 完整版字段列表（按业务逻辑分组排序）
         # ======================================
         # 基础信息
@@ -211,6 +217,7 @@ class TXSwHyRT(ThreadPoolExecutorBase):
         #   领涨股_zxj    - 领涨股最新价
         # ======================================
         all_columns = [
+            'trade_time',
             # 基础信息
             'pt板块代码', '板块代码', '板块名称',
             # 价格指标
@@ -230,6 +237,7 @@ class TXSwHyRT(ThreadPoolExecutorBase):
             '主力流入流出比',
             # 领涨股信息
             '领涨股_mcode', '领涨股_code', '领涨股_name', '领涨股_zd', '领涨股_zdf', '领涨股_zxj',
+            'crawl_time'
         ]
         # 筛选存在的列
         new_columns = [col for col in all_columns if col in temp_df.columns]

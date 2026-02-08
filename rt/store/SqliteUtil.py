@@ -30,6 +30,8 @@ class DBType(Enum):
     DC_WEEK_DB = ('dc_day_%s', None)
     DC_MONTH_DB = ('dc_month_%s', None)
 
+    JSL_CALENDAR = ('jsl_calendar', None)
+
 
     # demo
     LOG_DB = ('log_archive_%s', '%Y%m%d')  # 例如：log_archive_202512
@@ -93,7 +95,7 @@ class SqliteHelper:
 
     def __init__(self,
                  db_type: DBType,
-                 trade_date: str):
+                 trade_date: str = None):
         """
         初始化数据库辅助类
 

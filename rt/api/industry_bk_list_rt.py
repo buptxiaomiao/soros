@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import datetime
 import time
 import uuid
 import pandas as pd
@@ -10,6 +11,7 @@ from tushare.util.format_stock_code import format_stock_code
 from retrying import retry
 
 from rt.api.thread_pool_executor import ThreadPoolExecutorBase
+from rt.api.trading_time_util import get_last_trading_end_time
 
 
 
@@ -132,6 +134,10 @@ class IndustryBKListRT(ThreadPoolExecutorBase):
         for col in numeric_cols:
             if col in temp_df.columns:
                 temp_df[col] = pd.to_numeric(temp_df[col], errors="coerce")
+
+        # 添加交易时间和爬取时间
+        temp_df['trade_time'] = get_last_trading_end_time()
+        temp_df['crawl_time'] = datetime.datetime.now()
 
         return temp_df, total_num
 
